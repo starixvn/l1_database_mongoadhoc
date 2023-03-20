@@ -2,7 +2,7 @@
   const logger = (message) =>
     console.log(util.inspect(message, false, null, true));
 
-  const coll = l1_uat.minigame.global_configs;
+  const coll = l2p.minigame.global_configs;
   const filter = { type: "exchange_codes" };
 
   const codes = [

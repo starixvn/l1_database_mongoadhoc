@@ -83,7 +83,8 @@
       operatorId = "ONEworksVGCash";
       console.log(`Migrate isCash = true [${operatorId}]`,
         VG3.MergeVG.users.updateMany(
-          { operatorId: { $in: ["ONEworks_VG", "gamesimulator"] }, "local.isCash": true },
+          // { operatorId: { $in: ["ONEworks_VG", "gamesimulator"] }, "local.isCash": true },
+          { operatorId: { $in: ["ONEworks_VG"] }, "local.isCash": true },
           [{ $set: {
             operatorId: "ONEworksVGCash",
             "local.partnerId": "ONEworksVGCash",
@@ -96,7 +97,8 @@
       operatorId = "ONEworks_VG";
       console.log(`Migrate isCash = false [${operatorId}]`,
         VG3.MergeVG.users.updateMany(
-          { operatorId: { $in: ["ONEworks_VG", "gamesimulator"] }, "local.isCash": false },
+          // { operatorId: { $in: ["ONEworks_VG", "gamesimulator"] }, "local.isCash": false },
+          { operatorId: { $in: ["ONEworks_VG"] }, "local.isCash": false },
           [
             { $set: {
               operatorId: "ONEworks_VG",
@@ -139,6 +141,9 @@
       console.log(`users.${field}`,
         VG2.minigame.users.find({ [field]: { $in: VG3.MergeVG.users.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, { _id: 1 }, { collation }).toArray().length
       );
+      console.table(
+        VG2.minigame.users.find({ [field]: { $in: VG3.MergeVG.users.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, {}, { collation }).map(_ => _.local).toArray()
+      );
 
       field = "local.username";
       collation = { locale: "en", strength: 2 };
@@ -156,17 +161,26 @@
       console.log(`userinfos.${field}`,
         VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, { _id: 1 }, { collation }).toArray().length
       );
+      console.table(
+        VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, {}, { collation }).toArray()
+      );
 
       field = "name";
       collation = { locale: "en", strength: 2 };
       console.log(`userinfos.${field}`,
         VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, { _id: 1 }, { collation }).toArray().length
       );
+      console.table(
+        VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, {}, { collation }).toArray()
+      );
 
       field = "UID";
       collation = { locale: "simple" };
       console.log(`userinfos.${field}`,
         VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, { _id: 1 }, { collation }).toArray().length
+      );
+      console.table(
+        VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, {}, { collation }).toArray()
       );
     }
   }

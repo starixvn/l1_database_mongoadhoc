@@ -34,7 +34,7 @@
   ];
   logger(coll.findOne(filter));
   logger(
-    coll.updateOne(filter, { $push: { "configs.codes": { $each: codes } } })
+    coll.updateOne(filter, { $addToSet: { "configs.codes": { $each: codes } } })
   );
   logger(coll.findOne(filter));
 }

@@ -2,7 +2,7 @@
   const logger = (message) =>
     console.log(util.inspect(message, false, null, true));
 
-  const coll = l2p.minigame.global_configs;
+  const coll = l2_pro.minigame.global_configs;
   const filter = { type: "exchange_codes" };
 
   const codes = [
@@ -34,7 +34,10 @@
   ];
   logger(coll.findOne(filter));
   logger(
-    coll.updateOne(filter, { $addToSet: { "configs.codes": { $each: codes } } })
+    coll.updateOne(filter, {
+      $addToSet: { "configs.codes": { $each: codes } },
+      $set: { updatedTime: ISODate() },
+    })
   );
   logger(coll.findOne(filter));
 }

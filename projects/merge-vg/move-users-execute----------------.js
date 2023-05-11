@@ -1,6 +1,6 @@
 {
-  const VG3 = l3c;
-  const VG2 = l2p;
+  const VG3 = l3_pro;
+  const VG2 = l2_pro;
 
   {
     console.log("\n === Backup data ===");
@@ -8,8 +8,8 @@
     const colls = ["users", "userinfos"];
     for (const coll of colls) {
       console.log(coll, VG2.minigame.getCollection(coll).aggregate([
-        { $merge: { into: { db: 'MergeVG_bk', coll: `${coll}_20230328` } } },
-      ]), VG2.MergeVG_bk.getCollection(`${coll}_20230328`).countDocuments());
+        { $merge: { into: { db: 'MergeVG_bk', coll: `${coll}_20230511` } } },
+      ]), VG2.MergeVG_bk.getCollection(`${coll}_20230511`).countDocuments());
     }
   }
 
@@ -52,9 +52,10 @@
     let coll;
     const collation = { locale: "en", strength: 2 };
 
-    {
-      console.log("users_dup", VG2.MergeVG.users_dup.drop());
+    console.log("users_dup", VG2.MergeVG.users_dup.drop());
+    console.log("userinfos_dup", VG2.MergeVG.userinfos_dup.drop());
 
+    {
       VG2.MergeVG.users.aggregate([
         { $match: { "local.username": { $in:
             VG2.minigame.users.find({}, { _id: 0, "local.username": 1 }).map(_ => _.local.username).toArray()
@@ -83,16 +84,14 @@
     }
 
     {
-      console.log("userinfos_dup", VG2.MergeVG.userinfos_dup.drop());
-
-      VG2.MergeVG.userinfos.aggregate([
-        { $match: { UID: { $in:
-            VG2.minigame.userinfos.find({}, { _id: 0, UID: 1 }).map(_ => _.UID).toArray()
-          } },
-        },
-        { $merge: "userinfos_dup" },
-      ], { collation });
-      console.log("userinfos_dup", VG2.MergeVG.userinfos_dup.countDocuments());
+      // VG2.MergeVG.userinfos.aggregate([
+      //   { $match: { UID: { $in:
+      //       VG2.minigame.userinfos.find({}, { _id: 0, UID: 1 }).map(_ => _.UID).toArray()
+      //     } },
+      //   },
+      //   { $merge: "userinfos_dup" },
+      // ], { collation });
+      // console.log("userinfos_dup", VG2.MergeVG.userinfos_dup.countDocuments());
 
       VG2.MergeVG.userinfos.aggregate([
         { $match: { name: { $in:

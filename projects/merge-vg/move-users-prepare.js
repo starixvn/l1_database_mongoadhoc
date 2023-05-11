@@ -1,6 +1,6 @@
 {
-  const VG3 = l3c;
-  const VG2 = l2p;
+  const VG3 = l3_pro;
+  const VG2 = l2_pro;
 
   {
     const collections = ["users", "userinfos"];
@@ -179,9 +179,9 @@
       console.log(`userinfos.${field}`,
         VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, { _id: 1 }, { collation }).toArray().length
       );
-      console.table(
-        VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, {}, { collation }).toArray()
-      );
+      // console.table(
+      //   VG2.minigame.userinfos.find({ [field]: { $in: VG3.MergeVG.userinfos.find({}, { [field]: 1 }).map((_) => _[field]).toArray() } }, {}, { collation }).toArray()
+      // );
     }
   }
 }

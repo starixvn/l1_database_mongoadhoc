@@ -1,24 +1,24 @@
 deploy: {
-  // const dbs = l1;
-  const dbs = l2p;
+  const dbs = l1;
+  // const dbs = l2p;
   const testDB = dbs.AdjustStakeLevel;
   const realDB = dbs.minigame;
   const backupDB = dbs[`AdjustStakeLevel_${Date.now()}`];
 
-  // const currencyGroupNames = ["GrUSD", "GrTEST"]
-  const currencyGroupNames = ["Cash_INH"];
-
-  // const data = [
-  //   [ { stake: 0.1 }, { stake: 0.1 } ],
-  //   [ { stake: 1 }, { stake: 0.2 } ],
-  //   [ { stake: 5 }, { stake: 1 } ],
-  // ];
+  const currencyGroupNames = ["GrUSD", "GrTEST"]
+  // const currencyGroupNames = ["Cash_INH"];
 
   const data = [
-    [ { stake: 1, jackpot: 5_000 }, { stake: 1, jackpot: 5_000 } ],
-    [ { stake: 10, jackpot: 50_000 }, { stake: 5, jackpot: 25_000 } ],
-    [ { stake: 50, jackpot: 250_000 }, { stake: 10, jackpot: 50_000 } ],
+    [ { stake: 0.1 }, { stake: 0.1 } ],
+    [ { stake: 1 }, { stake: 0.2 } ],
+    [ { stake: 5 }, { stake: 1 } ],
   ];
+
+  // const data = [
+  //   [ { stake: 1, jackpot: 5_000 }, { stake: 1, jackpot: 5_000 } ],
+  //   [ { stake: 10, jackpot: 50_000 }, { stake: 5, jackpot: 25_000 } ],
+  //   [ { stake: 50, jackpot: 250_000 }, { stake: 10, jackpot: 50_000 } ],
+  // ];
 
   const execDB = realDB;
 
@@ -135,10 +135,14 @@ deploy: {
       data.forEach(([from, to]) => {
         console.log(from, to);
 
-        console.log(coll, `[ ${from.stake}]`, EJSON.stringify(coll.updateMany(
-          { ...filter, pool: from.stake, initAmount: from.jackpot ?? 0 },
-          { $set: { pool: to.stake } },
-        )));
+        try {
+          console.log(coll, `[ ${from.stake}]`, EJSON.stringify(coll.updateOne(
+            { ...filter, pool: from.stake, initAmount: from.jackpot ?? 0 },
+            { $set: { pool: to.stake } },
+          )));
+        } catch (e) {
+          console.log(coll, "ERROR", e);
+        }
       });
 
       console.log(coll, "after", coll.find(

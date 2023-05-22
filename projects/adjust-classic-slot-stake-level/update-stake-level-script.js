@@ -1,24 +1,24 @@
 deploy: {
-  const dbs = l1;
-  // const dbs = l2p;
+  // const dbs = l1_pro;
+  const dbs = l2_pro;
   const testDB = dbs.AdjustStakeLevel;
   const realDB = dbs.minigame;
   const backupDB = dbs[`AdjustStakeLevel_${Date.now()}`];
 
-  const currencyGroupNames = ["GrUSD", "GrTEST"]
-  // const currencyGroupNames = ["Cash_INH"];
-
-  const data = [
-    [ { stake: 0.1 }, { stake: 0.1 } ],
-    [ { stake: 1 }, { stake: 0.2 } ],
-    [ { stake: 5 }, { stake: 1 } ],
-  ];
+  // const currencyGroupNames = ["GrUSD", "GrTEST"]
+  const currencyGroupNames = ["Cash_INH"];
 
   // const data = [
-  //   [ { stake: 1, jackpot: 5_000 }, { stake: 1, jackpot: 5_000 } ],
-  //   [ { stake: 10, jackpot: 50_000 }, { stake: 5, jackpot: 25_000 } ],
-  //   [ { stake: 50, jackpot: 250_000 }, { stake: 10, jackpot: 50_000 } ],
+  //   [ { stake: 0.1 }, { stake: 0.1 } ],
+  //   [ { stake: 1 }, { stake: 0.2 } ],
+  //   [ { stake: 5 }, { stake: 1 } ],
   // ];
+
+  const data = [
+    [ { stake: 1, jackpot: 5_000 }, { stake: 1, jackpot: 5_000 } ],
+    [ { stake: 10, jackpot: 50_000 }, { stake: 5, jackpot: 25_000 } ],
+    [ { stake: 50, jackpot: 250_000 }, { stake: 10, jackpot: 50_000 } ],
+  ];
 
   const execDB = realDB;
 
@@ -55,7 +55,7 @@ deploy: {
 
     const colls = execDB.game_configs.find({ type: 2 }, { _id: 0, name: 1 }).map(_ => `${_.name}_freespins`).toArray();
     const dataLengths = colls.map(coll => {
-      const data = execDB.getCollection(coll).find({ available: { $ne: 0 } }).toArray();
+      const data = execDB.getCollection(coll).find({ available: { $ne: 0 }, expiryTime: {$gt: ISODate()} }).toArray();
       if (data.length > 0) {
         console.log(coll, data);
       }

@@ -1,5 +1,5 @@
 {
-  const dbs = l2p;
+  const dbs = l2;
   const db = dbs.minigame;
 
   console.log("dbs.test.jackpots_update", dbs.test.jackpots_update.drop());
@@ -81,6 +81,7 @@
       $project: {
         _id: 1,
         currency: 1,
+        operatorId: 1,
         rate: { $toDouble: { $multiply: ["$multiplier", "$ex.code"] } },
         exchangeRateId: "$ex.exId",
       },

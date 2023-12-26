@@ -1,6 +1,8 @@
 {
+    const dbs = l2pp;
+
     ["playerId", "memberId", "winnerId", "local.memberId"].forEach((field) => {
-        [l2pp.minigame, l2pp.member].forEach((database) => {
+        [dbs.minigame, dbs.member].forEach((database) => {
             database
                 .getCollectionNames()
                 .filter((collName) => !/^system/.test(collName))
@@ -35,7 +37,7 @@
     });
 
     ["call.playerId", "result.playerId"].forEach((field) => {
-        [l2pp.log].forEach((database) => {
+        [dbs.log].forEach((database) => {
             database
                 .getCollectionNames()
                 .filter((collName) => !/^system/.test(collName))

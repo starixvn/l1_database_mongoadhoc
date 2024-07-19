@@ -2,7 +2,7 @@
 
 {
     const logger = (...args) => console.log(new Date().toISOString(), ...args);
-    const db = l2.minigame_arc;
+    const db = l1.minigame_arc;
     const test = new RegExp().test;
 
     const collNames = db
@@ -50,6 +50,8 @@
                     logger(collName, cnt);
                 }
             }
+
+            coll.updateOne({ _id }, { $set: { "__archive.md5": true } });
         });
 
         const { size: size_, count: count_, storageSize: storageSize_ } = coll.stats();
@@ -59,7 +61,7 @@
 
 {
     const logger = (...args) => console.log(new Date().toISOString(), ...args);
-    const db = l2p.minigame_arc;
+    const db = l2pp.minigame_arc;
 
     const collName = "blockchainbaccarat_results_bk";
     const coll = db.getCollection(collName);
@@ -67,7 +69,7 @@
     logger(collName, count, size / 1024 ** 2, storageSize / 1024 ** 2);
     let cnt = 0;
 
-    coll.find().forEach((data) => {
+    coll.find({ "__archive.md5": { $ne: true } }).forEach((data) => {
         const { _id, chain } = data;
         let updated = false;
 
@@ -113,6 +115,8 @@
                 logger(collName, cnt);
             }
         }
+
+        coll.updateOne({ _id }, { $set: { "__archive.md5": true } });
     });
 
     const { size: size_, count: count_, storageSize: storageSize_ } = coll.stats();

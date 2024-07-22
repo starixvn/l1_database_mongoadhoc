@@ -1,4 +1,4 @@
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
+[l1_pro, l2_pro, sn_pro].forEach((dbs) => {
     const coll = dbs.ops_configs.archive_configs;
     coll.find()
         .toArray()
@@ -10,7 +10,7 @@
         });
 });
 
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
+[l1_pro, l2_pro, sn_pro].forEach((dbs) => {
     const coll = dbs.ops_configs.archive_templates;
     coll.find()
         .toArray()
@@ -22,7 +22,7 @@
         });
 });
 
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
+[l1_pro, l2_pro, sn_pro].forEach((dbs) => {
     const coll = dbs.ops_configs.index_templates;
     coll.find()
         .toArray()
@@ -34,31 +34,7 @@
         });
 });
 
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
-    const coll = dbs.ops_configs.summary_templates;
-    coll.find()
-        .toArray()
-        .forEach((_) => {
-            const { _id, category, type } = _;
-            _._id = { category, type };
-            coll.deleteOne({ _id });
-            coll.insertOne(_);
-        });
-});
-
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
-    const coll = dbs.ops_configs.summary_templates;
-    coll.find()
-        .toArray()
-        .forEach((_) => {
-            const { _id, category, type } = _;
-            _._id = { category, type };
-            coll.deleteOne({ _id });
-            coll.insertOne(_);
-        });
-});
-
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
+[l1_pro, l2_pro, sn_pro].forEach((dbs) => {
     const coll = dbs.ops_configs.summary_configs;
     coll.find()
         .toArray()
@@ -70,7 +46,19 @@
         });
 });
 
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
+[l1_pro, l2_pro, sn_pro].forEach((dbs) => {
+    const coll = dbs.ops_configs.summary_templates;
+    coll.find()
+        .toArray()
+        .forEach((_) => {
+            const { _id, category, type } = _;
+            _._id = { category, type };
+            coll.deleteOne({ _id });
+            coll.insertOne(_);
+        });
+});
+
+[l1_pro, l2_pro, sn_pro].forEach((dbs) => {
     const coll = dbs.summary.game_summary_config;
     coll.find()
         .toArray()
@@ -82,7 +70,7 @@
         });
 });
 
-[l1_sit, l2_sit, sn_sit, l1_uat, l2_uat, sn_uat].forEach((dbs) => {
+[l1_pro, l2_pro, sn_pro].forEach((dbs) => {
     const coll = dbs.minigame.global_configs;
     coll.find({ type: { $in: ["kenomatch_liveodds", "exchange_codes"] } })
         .toArray()

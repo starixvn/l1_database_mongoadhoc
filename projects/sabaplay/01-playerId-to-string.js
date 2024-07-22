@@ -1,5 +1,5 @@
 {
-    const dbs = l1_pro;
+    const dbs = l1pp;
 
     ["playerId", "memberId", "winnerId", "local.memberId"].forEach((field) => {
         [dbs.minigame, dbs.member].forEach((database) => {

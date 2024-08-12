@@ -1,6 +1,4 @@
-[
-    [l2_pro, l2_pro_arc],
-].forEach(([dbs, dbsArc]) => {
+[[sn_pro, sn_pro_arc]].forEach(([dbs, dbsArc]) => {
     let okCnt = 0;
     let nullCnt = 0;
 

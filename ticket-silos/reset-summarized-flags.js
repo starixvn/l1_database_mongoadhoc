@@ -1,8 +1,9 @@
-[l1].forEach((dbs) => {
+local.forEach((dbs) => {
     dbs.minigame
         .getCollectionNames()
         .sort()
         .forEach((collName) => {
+            if (collName === "ticket_silos") return console.log(dbs, collName, "SKIP");
             try {
                 const coll = dbs.minigame.getCollection(collName);
                 const res = coll.updateMany({ "__archive.summarized": true }, { $unset: { "__archive.summarized": 1 } });

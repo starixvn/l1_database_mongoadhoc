@@ -119,4 +119,15 @@
             },
         ])
     );
+
+    log(
+        "currency_group_games",
+        db.currency_group_games.updateMany({ defaultBetLevel: null, betLevels: { $ne: null }, gameId: { $in: gameIds } }, [
+            {
+                $set: {
+                    defaultBetLevel: { $min: "$betLevels" },
+                },
+            },
+        ])
+    );
 }

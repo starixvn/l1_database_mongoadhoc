@@ -1,18 +1,23 @@
-{
-    const db = l1_uat.minigame;
-    const log = (...args) => console.log(new Date().toISOString(), db, ...args.map((_) => util.inspect(_, false, null, true)));
+local.forEach((dbs) => {
+    const db = dbs.minigame;
+    const log = (...args) => console.log(new Date().toISOString(), db.getName(), ...args.map((_) => util.inspect(_, false, null, true)));
 
     const gameIds = [63, 64, 65, 68, 69, 70, 74, 76];
 
-    db.game_configs.aggregate([
-        { $match: { gameId: { $in: gameIds } } }, //
-        { $set: { _id: "$$REMOVE" } },
-        { $merge: { into: { db: "minigame_rm", coll: "game_configs_rm" } } },
-    ]);
+    log(
+        "game_configs backup",
+        db.game_configs
+            .aggregate([
+                { $match: { gameId: { $in: gameIds } } }, //
+                { $set: { "__archive.milestone": 203, _id: "$$REMOVE" } }, //
+                { $merge: { into: { db: "minigame_rm", coll: "game_configs_rb" } } },
+            ])
+            .toArray()
+    );
 
     log(
         "game_configs",
-        db.game_configs.updateMany({ "slotsConfig.stakeLevels": { $ne: null }, gameId: { $in: gameIds } }, [
+        db.game_configs.updateMany({ "slotsConfig.stakeLevels": { $ne: null }, "slotsConfig.betLevels": null, gameId: { $in: gameIds } }, [
             {
                 $set: {
                     "slotsConfig.stakeLevels": "$$REMOVE",
@@ -96,15 +101,20 @@
         ])
     );
 
-    db.currency_group_games.aggregate([
-        { $match: { gameId: { $in: gameIds } } }, //
-        { $set: { _id: "$$REMOVE" } },
-        { $merge: { into: { db: "minigame_rm", coll: "currency_group_games_rm" } } },
-    ]);
+    log(
+        "currency_group_games backup",
+        db.currency_group_games
+            .aggregate([
+                { $match: { gameId: { $in: gameIds } } }, //
+                { $set: { "__archive.milestone": 203, _id: "$$REMOVE" } }, //
+                { $merge: { into: { db: "minigame_rm", coll: "currency_group_games_rb" } } },
+            ])
+            .toArray()
+    );
 
     log(
         "currency_group_games",
-        db.currency_group_games.updateMany({ stakeLevels: { $ne: null }, gameId: { $in: gameIds } }, [
+        db.currency_group_games.updateMany({ stakeLevels: { $ne: null }, betLevels: null, gameId: { $in: gameIds } }, [
             {
                 $set: {
                     stakeLevels: "$$REMOVE",
@@ -130,4 +140,21 @@
             },
         ])
     );
-}
+
+    log(
+        "jackpots backup",
+        db.jackpots
+            .aggregate([
+                { $match: { gameId: { $in: gameIds } } }, //
+                { $set: { "__archive.milestone": 203, _id: "$$REMOVE" } }, //
+                { $merge: { into: { db: "minigame_rm", coll: "jackpots_rb" } } },
+            ])
+            .toArray()
+    );
+
+    log(
+        db.jackpots.updateMany({ gameId: { $in: gameIds }, prize: null, pool: 1000 }, { $set: { prize: "minor" } }),
+        db.jackpots.updateMany({ gameId: { $in: gameIds }, prize: null, pool: 5000 }, { $set: { prize: "major" } }),
+        db.jackpots.updateMany({ gameId: { $in: gameIds }, prize: null, pool: 10000 }, { $set: { prize: "grand" } })
+    );
+});

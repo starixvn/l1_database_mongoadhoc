@@ -1,5 +1,5 @@
 (async () => {
-    const UPDATE = true;
+    const UPDATE = false;
     const db = l2_pro.minigame;
     // const gameIds = [76];
     const gameIds = [63, 64, 65, 68, 69, 70, 74];

@@ -23,8 +23,31 @@ declare global {
     var loadScript: shellApi.ShellApi["load"];
     var loadFolder: shellApi.ShellApi["load"];
     var passwordPrompt: shellApi.ShellApi["passwordPrompt"];
+
+    // https://github.com/mongodb-js/mongosh/blob/6e71cb1ca0cca895c8dd075847fa555802d4139b/packages/shell-api/src/shell-bson.ts#L168
+    var DBRef: (namespace: string, oid: any, db?: string, fields?: Document) => typeof ldbMongo.DBRef.prototype;
+    var bsonsize: (object: any) => number;
+    var MaxKey: () => ldbMongo.MaxKey.prototype;
+    var MinKey: () => ldbMongo.MinKey.prototype;
     var ObjectId: (id?: string | number | ldbMongo.ObjectId | Buffer) => ldbMongo.ObjectId;
+    var Timestamp: (t?: number | typeof ldbMongo.Long | { t: number; i: number }, i?: number) => ldbMongo.Timestamp.prototype;
+    var Code: (c?: string | Function, s?: any) => ldbMongo.Code.prototype;
+    var NumberDecimal: (s?: string) => ldbMongo.Decimal128.prototype;
+    var NumberInt: (v?: string) => ldbMongo.Int32.prototype;
+    var NumberLong: (s?: string | number) => ldbMongo.Long.prototype;
+    var ISODate: (input?: string) => Date;
+    var BinData: (subtype: number, b64string: string) => ldbMongo.Binary;
+    var HexData: (subtype: number, hexstr: string) => ldbMongo.Binary;
+    var UUID: (hexstr?: string) => ldbMongo.Binary;
+    var MD5: (hexstr: string) => ldbMongo.Binary;
+    var Decimal128: typeof ldbMongo.Decimal128;
+    var BSONSymbol: typeof ldbMongo.BSONSymbol;
+    var Int32: typeof ldbMongo.Int32;
+    var Long: typeof ldbMongo.Long;
+    var Binary: typeof ldbMongo.Binary;
+    var Double: typeof ldbMongo.Double;
     var EJSON: typeof ldbMongo.EJSON;
+    var BSONRegExp: typeof ldbMongo.BSONRegExp;
 
     type AnyBulkWriteOperation = ldbMongo.AnyBulkWriteOperation;
     type BsonDocument = ldbMongo.Document;

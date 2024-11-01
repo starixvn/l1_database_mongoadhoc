@@ -1,9 +1,10 @@
-[l1_sit, l2_sit].forEach((dbs) => {
+[l1_pro, l2_pro].forEach((dbs) => {
     const db = dbs.minigame;
     const log = (...args) => console.log(new Date().toISOString(), dbs.toString(), db.getName(), ...args.map((_) => util.inspect(_, false, null, true)));
 
     // const gameIds = [63, 64, 65, 68, 69, 70, 74, 76];
-    const gameIds = [62];
+    // const gameIds = [62];
+    const gameIds = [49];
 
     log(
         "game_configs backup",

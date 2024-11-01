@@ -1,9 +1,10 @@
 (async () => {
     const UPDATE = true;
-    const db = l2_sit.minigame;
+    const db = l2_pro.minigame;
     // const gameIds = [76];
     // const gameIds = [63, 64, 65, 68, 69, 70, 74];
-    const gameIds = [62];
+    // const gameIds = [62];
+    const gameIds = [49];
     const groupIdNull = ObjectId("000000000000000000000000");
 
     const data = [

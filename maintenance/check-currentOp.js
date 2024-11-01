@@ -1,10 +1,18 @@
 {
-    const dbs = l1;
+    const dbs = l2;
 
     const res = dbs.admin
         .aggregate([
             { $currentOp: { allUsers: true, idleConnections: false } },
-            { $match: { appName: /admin@/, active: true } },
+            {
+                $match: {
+                    "command.hello": null,
+                    "command.ismaster": null,
+                    "command.isMaster": null,
+                    "command": { $ne: {} }
+                },
+            },
+            // { $match: { appName: /admin@/, active: true } },
             // {
             //     $project: {
             //         type: 1,
@@ -15,9 +23,15 @@
             //         ms: { $divide: ["$microsecs_running", 1000] },
             //     },
             // },
+            {
+                $set: {
+                    "command.lsid": "$$REMOVE",
+                },
+            },
             { $sort: { app: 1, ms: -1 } },
         ])
         .toArray();
 
-    console.log(res);
+    // console.table(res);
+    res;
 }

@@ -1,11 +1,12 @@
-{
-    const db = l2_uat.minigame;
+[l1_uat].forEach((dbs) => {
+    const db = dbs.minigame;
     const log = (...args) => console.log(new Date().toISOString(), db, ...args);
 
     {
         log("NON-JACKPOT GAMES");
-        // const gameIds = [63];
-        const gameIds = [63, 64, 65, 68, 69];
+        // const gameIds = [62];
+        // const gameIds = [63, 64, 65, 68, 69];
+        const gameIds = [49];
 
         log(
             db.game_configs.updateMany({ gameId: { $in: gameIds } }, [
@@ -55,7 +56,8 @@
 
     {
         log("JACKPOT GAMES");
-        const gameIds = [70, 76, 74];
+        // const gameIds = [70, 76, 74];
+        const gameIds = [];
 
         log(
             db.game_configs.updateMany({ gameId: { $in: gameIds } }, [
@@ -133,4 +135,4 @@
             db.jackpots.updateMany({ gameId: { $in: gameIds }, pool: 10000 }, { $set: { prize: "grand" } })
         );
     }
-}
+});

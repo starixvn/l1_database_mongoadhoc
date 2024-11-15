@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 import * as ldbMongo from "@ldb/mongo";
 import * as serviceProviderCore from "@mongosh/service-provider-core";
 import * as shellApi from "@mongosh/shell-api";
@@ -8,6 +9,7 @@ type DBs = Record<string, Database>;
 /** Re-export */
 declare global {
     var path: typeof import("node:path");
+    var util: typeof import("util");
 
     var [local, sit, sit_arc, uat, uat_arc, pro, pro_arc]: DBs[][];
     var [l1, l1p, l1pp, l1ppp, l2, l2p, l2pp, l4]: DBs[];
@@ -15,7 +17,7 @@ declare global {
     var [l1_sit_arc, l1_uat_arc, l1_pro_arc, l2_sit_arc, l2_uat_arc, l2_pro_arc, sn_sit_arc, sn_uat_arc, sn_pro_arc]: DBs[];
 
     var _auth: number;
-    var auth: (db: DBs | Database) => Promise<void>;
+    var auth: (db: DBs | Database) => void;
 
     var db: shellApi.Database;
     var rs: shellApi.ReplicaSet;
@@ -25,13 +27,13 @@ declare global {
     var passwordPrompt: shellApi.ShellApi["passwordPrompt"];
 
     // https://github.com/mongodb-js/mongosh/blob/6e71cb1ca0cca895c8dd075847fa555802d4139b/packages/shell-api/src/shell-bson.ts#L168
-    var DBRef: (namespace: string, oid: any, db?: string, fields?: Document) => typeof ldbMongo.DBRef.prototype;
-    var bsonsize: (object: any) => number;
+    var DBRef: (namespace: string, oid: unknown, db?: string, fields?: ldbMongo.Document) => typeof ldbMongo.DBRef.prototype;
+    var bsonsize: (object: unknown) => number;
     var MaxKey: () => ldbMongo.MaxKey.prototype;
     var MinKey: () => ldbMongo.MinKey.prototype;
     var ObjectId: (id?: string | number | ldbMongo.ObjectId | Buffer) => ldbMongo.ObjectId;
     var Timestamp: (t?: number | typeof ldbMongo.Long | { t: number; i: number }, i?: number) => ldbMongo.Timestamp.prototype;
-    var Code: (c?: string | Function, s?: any) => ldbMongo.Code.prototype;
+    var Code: (c?: string | ((...args: unknown[]) => unknown), s?: unknown) => ldbMongo.Code.prototype;
     var NumberDecimal: (s?: string) => ldbMongo.Decimal128.prototype;
     var NumberInt: (v?: string) => ldbMongo.Int32.prototype;
     var NumberLong: (s?: string | number) => ldbMongo.Long.prototype;
@@ -53,7 +55,7 @@ declare global {
     type BsonDocument = ldbMongo.Document;
     type BulkWriteResult = shellApi.BulkWriteResult;
     type CreateCollectionOptions = ldbMongo.CreateCollectionOptions;
-    type Database = shellApi.Database;
+    type Database = shellApi.Database & { [coll: string]: shellApi.Collection };
     type IndexDescription = ldbMongo.IndexDescription;
     type IndexDefinition = {
         key: IndexDescription["key"];
@@ -423,4 +425,65 @@ declare global {
         pipeline?: string;
         columns: BIColumn[];
     };
+}
+
+declare module "@mongosh/shell-api" {
+    interface Collection {
+        aggregate(pipeline: ldbMongo.Document[], options: ldbMongo.Document & { explain?: never }): ldbMongo.AggregationCursor;
+        aggregate(pipeline: ldbMongo.Document[], options: ldbMongo.Document & { explain: ldbMongo.ExplainVerbosityLike }): ldbMongo.Document;
+        aggregate(...stages: ldbMongo.Document[]): ldbMongo.AggregationCursor;
+        bulkWrite(operations: AnyBulkWriteOperation[], options?: ldbMongo.BulkWriteOptions): shellApi.BulkWriteResult;
+        countDocuments(query?: ldbMongo.Document, options?: ldbMongo.CountDocumentsOptions): number;
+        deleteMany(filter: ldbMongo.Document, options?: ldbMongo.DeleteOptions): ldbMongo.DeleteResult | ldbMongo.Document;
+        deleteOne(filter: ldbMongo.Document, options?: ldbMongo.DeleteOptions): ldbMongo.DeleteResult | ldbMongo.Document;
+        distinct(field: string): ldbMongo.Document;
+        distinct(field: string, query: ldbMongo.Document): ldbMongo.Document;
+        distinct(field: string, query: ldbMongo.Document, options: ldbMongo.DistinctOptions): ldbMongo.Document;
+        estimatedDocumentCount(options?: ldbMongo.EstimatedDocumentCountOptions): number;
+        find(query?: ldbMongo.Document, projection?: ldbMongo.Document, options?: ldbMongo.FindOptions): shellApi.Cursor;
+        findOne(query?: ldbMongo.Document, projection?: ldbMongo.Document, options?: FindOptions): ldbMongo.Document | null;
+        renameCollection(newName: string, dropTarget?: boolean): ldbMongo.Document;
+        findOneAndDelete(filter: ldbMongo.Document, options?: ldbMongo.FindOneAndDeleteOptions): ldbMongo.Document | null;
+        insert(docs: ldbMongo.Document | ldbMongo.Document[], options?: ldbMongo.BulkWriteOptions): ldbMongo.InsertManyResult;
+        insertMany(docs: ldbMongo.Document[], options?: ldbMongo.BulkWriteOptions): ldbMongo.InsertManyResult;
+        insertOne(doc: ldbMongo.Document, options?: ldbMongo.InsertOneOptions): ldbMongo.InsertOneResult;
+        isCapped(): boolean;
+        replaceOne(filter: ldbMongo.Document, replacement: ldbMongo.Document, options?: ldbMongo.ReplaceOptions): ldbMongo.UpdateResult;
+        update(filter: ldbMongo.Document, update: ldbMongo.Document, options?: ldbMongo.UpdateOptions & { multi?: boolean }): ldbMongo.UpdateResult | ldbMongo.Document;
+        updateMany(filter: ldbMongo.Document, update: ldbMongo.Document, options?: ldbMongo.UpdateOptions): ldbMongo.UpdateResult | ldbMongo.Document;
+        updateOne(filter: ldbMongo.Document, update: ldbMongo.Document, options?: ldbMongo.UpdateOptions): ldbMongo.UpdateResult | ldbMongo.Document;
+        compactStructuredEncryptionData(): ldbMongo.Document;
+        convertToCapped(size: number): ldbMongo.Document;
+        createIndexes(keyPatterns: ldbMongo.Document[], options?: ldbMongo.CreateIndexesOptions, commitQuorum?: number | string): string[];
+        createIndex(keys: ldbMongo.Document, options?: ldbMongo.CreateIndexesOptions, commitQuorum?: number | string): string;
+        ensureIndex(keys: ldbMongo.Document, options?: ldbMongo.CreateIndexesOptions, commitQuorum?: number | string): ldbMongo.Document;
+        getIndexes(): ldbMongo.Document[];
+        getIndexSpecs(): ldbMongo.Document[];
+        getIndexKeys(): ldbMongo.Document[];
+        dropIndexes(indexes?: string | string[] | ldbMongo.Document | ldbMongo.Document[]): ldbMongo.Document;
+        dropIndex(index: string | ldbMongo.Document): ldbMongo.Document;
+        totalIndexSize(...args: unknown[]): number;
+        reIndex(): ldbMongo.Document;
+        getDB(): Database;
+        getMongo(): shellApi.Mongo;
+        dataSize(): number;
+        storageSize(): number;
+        totalSize(): number;
+        drop(options?: ldbMongo.DropCollectionOptions): boolean;
+        exists(): ldbMongo.Document;
+        getFullName(): string;
+        getName(): string;
+        runCommand(commandName: string | ldbMongo.Document, options?: ldbMongo.RunCommandOptions): ldbMongo.Document;
+        explain(verbosity?: ldbMongo.ExplainVerbosityLike): Explainable;
+        stats(originalOptions?: ldbMongo.Document | number): ldbMongo.Document;
+        latencyStats(options?: ldbMongo.Document): ldbMongo.Document[];
+        validate(options?: boolean | ldbMongo.Document): ldbMongo.Document;
+        getShardVersion(): ldbMongo.Document;
+        getShardDistribution(): shellApi.CommandResult;
+        watch(pipeline?: ldbMongo.Document[] | ldbMongo.ChangeStreamOptions, options?: ldbMongo.ChangeStreamOptions): ChangeStreamCursor;
+        hideIndex(index: string | ldbMongo.Document): ldbMongo.Document;
+        unhideIndex(index: string | ldbMongo.Document): ldbMongo.Document;
+        analyzeShardKey(key: ldbMongo.Document, options?: ldbMongo.Document): ldbMongo.Document;
+        configureQueryAnalyzer(options: ldbMongo.Document): ldbMongo.Document;
+    }
 }

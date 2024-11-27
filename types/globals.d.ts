@@ -2,7 +2,7 @@
 import * as ldbMongo from "@ldb/mongo";
 import * as serviceProviderCore from "@mongosh/service-provider-core";
 import * as shellApi from "@mongosh/shell-api";
-import * as biColumnType from "../modules/bi/data-types.cjs";
+import ChangeStreamCursor from "@mongosh/shell-api/lib/change-stream-cursor.js";
 
 type DBs = Record<string, Database>;
 
@@ -27,16 +27,16 @@ declare global {
     var passwordPrompt: shellApi.ShellApi["passwordPrompt"];
 
     // https://github.com/mongodb-js/mongosh/blob/6e71cb1ca0cca895c8dd075847fa555802d4139b/packages/shell-api/src/shell-bson.ts#L168
-    var DBRef: (namespace: string, oid: unknown, db?: string, fields?: ldbMongo.Document) => typeof ldbMongo.DBRef.prototype;
+    var DBRef: (namespace: string, oid: unknown, db?: string, fields?: ldbMongo.Document) => typeof ldbMongo.DBRef;
     var bsonsize: (object: unknown) => number;
-    var MaxKey: () => ldbMongo.MaxKey.prototype;
-    var MinKey: () => ldbMongo.MinKey.prototype;
+    var MaxKey: () => ldbMongo.MaxKey;
+    var MinKey: () => ldbMongo.MinKey;
     var ObjectId: (id?: string | number | ldbMongo.ObjectId | Buffer) => ldbMongo.ObjectId;
-    var Timestamp: (t?: number | typeof ldbMongo.Long | { t: number; i: number }, i?: number) => ldbMongo.Timestamp.prototype;
-    var Code: (c?: string | ((...args: unknown[]) => unknown), s?: unknown) => ldbMongo.Code.prototype;
-    var NumberDecimal: (s?: string) => ldbMongo.Decimal128.prototype;
-    var NumberInt: (v?: string) => ldbMongo.Int32.prototype;
-    var NumberLong: (s?: string | number) => ldbMongo.Long.prototype;
+    var Timestamp: (t?: number | typeof ldbMongo.Long | { t: number; i: number }, i?: number) => ldbMongo.Timestamp;
+    var Code: (c?: string | ((...args: unknown[]) => unknown), s?: unknown) => ldbMongo.Code;
+    var NumberDecimal: (s?: string) => ldbMongo.Decimal128;
+    var NumberInt: (v?: string) => ldbMongo.Int32;
+    var NumberLong: (s?: string | number) => ldbMongo.Long;
     var ISODate: (input?: string) => Date;
     var BinData: (subtype: number, b64string: string) => ldbMongo.Binary;
     var HexData: (subtype: number, hexstr: string) => ldbMongo.Binary;
@@ -62,7 +62,7 @@ declare global {
         options: Omit<IndexDescription, "key">;
     };
     type IndexConfig = Record<string, IndexDefinition>;
-    type MongoServerError = shellApi.MongoServerError;
+    type MongoServerError = ldbMongo.MongoServerError;
     type ReplicaSet = shellApi.ReplicaSet;
     type WriteConcern = serviceProviderCore.WriteConcern;
 }
@@ -415,18 +415,6 @@ declare global {
     type Collation = CollationOptions & { locale: Locale; strength?: Strength; version?: string };
 }
 
-/** BI */
-declare global {
-    type BIColumnType = (typeof biColumnType)[keyof typeof biColumnType];
-    type BIColumn = { mongo_name: string; sql_name: string } & BIColumnType;
-    type BITable = {
-        _id: { db: string; table: string };
-        source?: string;
-        pipeline?: string;
-        columns: BIColumn[];
-    };
-}
-
 declare module "@mongosh/shell-api" {
     interface Collection {
         aggregate(pipeline: ldbMongo.Document[], options: ldbMongo.Document & { explain?: never }): ldbMongo.AggregationCursor;
@@ -441,7 +429,7 @@ declare module "@mongosh/shell-api" {
         distinct(field: string, query: ldbMongo.Document, options: ldbMongo.DistinctOptions): ldbMongo.Document;
         estimatedDocumentCount(options?: ldbMongo.EstimatedDocumentCountOptions): number;
         find(query?: ldbMongo.Document, projection?: ldbMongo.Document, options?: ldbMongo.FindOptions): shellApi.Cursor;
-        findOne(query?: ldbMongo.Document, projection?: ldbMongo.Document, options?: FindOptions): ldbMongo.Document | null;
+        findOne(query?: ldbMongo.Document, projection?: ldbMongo.Document, options?: ldbMongo.FindOptions): ldbMongo.Document | null;
         renameCollection(newName: string, dropTarget?: boolean): ldbMongo.Document;
         findOneAndDelete(filter: ldbMongo.Document, options?: ldbMongo.FindOneAndDeleteOptions): ldbMongo.Document | null;
         insert(docs: ldbMongo.Document | ldbMongo.Document[], options?: ldbMongo.BulkWriteOptions): ldbMongo.InsertManyResult;
@@ -474,13 +462,13 @@ declare module "@mongosh/shell-api" {
         getFullName(): string;
         getName(): string;
         runCommand(commandName: string | ldbMongo.Document, options?: ldbMongo.RunCommandOptions): ldbMongo.Document;
-        explain(verbosity?: ldbMongo.ExplainVerbosityLike): Explainable;
+        explain(verbosity?: ldbMongo.ExplainVerbosityLike): shellApi.Explainable;
         stats(originalOptions?: ldbMongo.Document | number): ldbMongo.Document;
         latencyStats(options?: ldbMongo.Document): ldbMongo.Document[];
         validate(options?: boolean | ldbMongo.Document): ldbMongo.Document;
         getShardVersion(): ldbMongo.Document;
         getShardDistribution(): shellApi.CommandResult;
-        watch(pipeline?: ldbMongo.Document[] | ldbMongo.ChangeStreamOptions, options?: ldbMongo.ChangeStreamOptions): ChangeStreamCursor;
+        watch(pipeline?: ldbMongo.Document[] | ldbMongo.ChangeStreamOptions, options?: ldbMongo.ChangeStreamOptions): ChangeStreamCursor.default;
         hideIndex(index: string | ldbMongo.Document): ldbMongo.Document;
         unhideIndex(index: string | ldbMongo.Document): ldbMongo.Document;
         analyzeShardKey(key: ldbMongo.Document, options?: ldbMongo.Document): ldbMongo.Document;

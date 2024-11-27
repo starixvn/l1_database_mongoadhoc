@@ -1,5 +1,5 @@
 {
   "extends": "@ldb/tsconfig/tsconfig.json",
-  "compilerOptions": { "allowJs": true, "noEmit": true },
-  "include": ["projects/**/*"]
+  "compilerOptions": { "allowJs": true, "noEmit": true, "skipLibCheck": false },
+  "include": ["**/*"]
 }

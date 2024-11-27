@@ -1,5 +1,5 @@
 {
-    const dbs = l2;
+    const dbs = l4p;
 
     const res = dbs.admin
         .aggregate([
@@ -9,7 +9,7 @@
                     "command.hello": null,
                     "command.ismaster": null,
                     "command.isMaster": null,
-                    "command": { $ne: {} }
+                    command: { $ne: {} },
                 },
             },
             // { $match: { appName: /admin@/, active: true } },

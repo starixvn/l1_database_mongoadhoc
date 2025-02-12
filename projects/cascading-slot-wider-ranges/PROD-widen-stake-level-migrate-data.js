@@ -1,5 +1,5 @@
 Promise.allSettled(
-    [l1_uat, l2_uat].map((dbs) => {
+    local.map((dbs) => {
         const db = dbs.minigame;
         /** @param { unknown[] } args */
         const log = (...args) => console.log(new Date().toISOString(), dbs.toString(), db.getName(), ...args.map((_) => util.inspect(_, false, null, true)));
@@ -7,15 +7,17 @@ Promise.allSettled(
         // const gameIds = [63, 64, 65, 68, 69, 70, 74, 76];
         // const gameIds = [62];
         // const gameIds = [46];
-        const gameIds = [38];
-        // const gameIds = [29];
+        // const gameIds = [38];
+        const gameIds = [29];
+
+        const milestone = 227;
 
         log(
             "game_configs backup",
             db.game_configs
                 .aggregate([
                     { $match: { gameId: { $in: gameIds }, "slotsConfig.stakeLevels": { $ne: null } } }, //
-                    { $set: { "__archive.milestone": 203, _id: "$$REMOVE" } }, //
+                    { $set: { "__archive.milestone": milestone, _id: "$$REMOVE" } }, //
                     { $merge: { into: { db: "minigame_rm", coll: "game_configs_rb" } } },
                 ])
                 .toArray(),
@@ -152,7 +154,7 @@ Promise.allSettled(
             db.currency_group_games
                 .aggregate([
                     { $match: { gameId: { $in: gameIds }, stakeLevels: { $ne: null } } }, //
-                    { $set: { "__archive.milestone": 203, _id: "$$REMOVE" } }, //
+                    { $set: { "__archive.milestone": milestone, _id: "$$REMOVE" } }, //
                     { $merge: { into: { db: "minigame_rm", coll: "currency_group_games_rb" } } },
                 ])
                 .toArray(),
@@ -197,7 +199,7 @@ Promise.allSettled(
             db.jackpots
                 .aggregate([
                     { $match: { gameId: { $in: gameIds } } }, //
-                    { $set: { "__archive.milestone": 203, _id: "$$REMOVE" } }, //
+                    { $set: { "__archive.milestone": milestone, _id: "$$REMOVE" } }, //
                     { $merge: { into: { db: "minigame_rm", coll: "jackpots_rb" } } },
                 ])
                 .toArray(),

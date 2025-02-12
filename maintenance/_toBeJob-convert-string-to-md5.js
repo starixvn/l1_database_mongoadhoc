@@ -149,11 +149,79 @@
             fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
         },
         {
+            namespace: { db: "minigame_arc", coll: "bac82_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac83_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac84_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac85_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac86_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac87_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac88_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac89_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac90_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac91_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac92_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
             namespace: { db: "minigame_arc", coll: "footballcointoss_results_bk" },
             fields: ["finalHash", "serverSeedHash"],
         },
         {
             namespace: { db: "minigame_arc", coll: "sedie3_results_bk" },
+            fields: ["encryptedResultHash.iv", "encryptedResultHash.content", "encryptedResult.iv", "encryptedResult.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "karakrus_results_bk" },
+            fields: ["encryptedResultHash.iv", "encryptedResultHash.content", "encryptedResult.iv", "encryptedResult.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac97_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac98_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac100_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "bac101_results_bk" },
+            fields: ["shoe.encryptedShoe.iv", "shoe.encryptedShoe.content", "shoe.encryptedShoeHash.iv", "shoe.encryptedShoeHash.content"],
+        },
+        {
+            namespace: { db: "minigame_arc", coll: "sevenupdown_results_bk" },
             fields: ["encryptedResultHash.iv", "encryptedResultHash.content", "encryptedResult.iv", "encryptedResult.content"],
         },
     ];
@@ -180,10 +248,10 @@
     const dotNotation = (obj, ref) => ref.split(".").reduce(getValue, obj);
 
     /** @param { string } field */
-    const fieldToFilter = (field) => ({ [field]: { $type: 2 } });
+    const fieldToFilter = (field) => ({ [field]: { $type: "string" } });
 
     // for (const dbs of local) {
-    for (const dbs of [l1]) {
+    for (const dbs of [l1p]) {
         /** @param { unknown[] } args */
         const log = (...args) => console.log(new Date(), dbs.toString(), ...args);
 
@@ -194,10 +262,13 @@
             const filter = { $or: fields.map(fieldToFilter) };
             log(db, coll, JSON.stringify(filter));
 
-            const res = await collection.createIndex(Object.fromEntries(fields.map((_) => [_, 1])), {
-                name: `FIX_${coll}_MD5`,
-                partialFilterExpression: filter,
-            });
+            const res = await collection.createIndex(
+                Object.fromEntries(fields.map((_) => [_, 1])), //
+                {
+                    name: `#FIX_${coll}_MD5`,
+                    partialFilterExpression: filter,
+                },
+            );
             log(db, coll, res);
 
             /** @type { AnyBulkWriteOperation[] } */
@@ -223,13 +294,18 @@
                     }
                 }
 
-                log(db, coll, EJSON.stringify(op));
+                // log(db, coll, EJSON.stringify(op));
 
                 bulkOps.push(op);
-                if (bulkOps.length >= 1000 && false) {
+                if (bulkOps.length >= 1000) {
                     const res = await collection.bulkWrite(bulkOps, { ordered: false });
                     log(db, coll, JSON.stringify(res));
+                    bulkOps = [];
                 }
+            }
+            if (bulkOps.length >= 0) {
+                const res = await collection.bulkWrite(bulkOps, { ordered: false });
+                log(db, coll, JSON.stringify(res));
             }
         }
     }

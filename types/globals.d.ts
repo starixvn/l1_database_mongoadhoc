@@ -10,6 +10,7 @@ type DBs = Record<string, Database>;
 declare global {
     var path: typeof import("node:path");
     var util: typeof import("util");
+    var fs: typeof import("fs");
 
     var [local, sit, sit_arc, uat, uat_arc, pro, pro_arc]: DBs[][];
     var [l1, l1p, l1pp, l1ppp, l2, l2p, l2pp, l4]: DBs[];
@@ -65,6 +66,8 @@ declare global {
     type MongoServerError = ldbMongo.MongoServerError;
     type ReplicaSet = shellApi.ReplicaSet;
     type WriteConcern = serviceProviderCore.WriteConcern;
+    type DatabaseAggregationPipeline = ldbMongo.DatabaseAggregationPipeline;
+    type CollectionAggregationPipeline = ldbMongo.CollectionAggregationPipeline;
 }
 
 /** Security */
@@ -417,9 +420,9 @@ declare global {
 
 declare module "@mongosh/shell-api" {
     interface Collection {
-        aggregate(pipeline: ldbMongo.Document[], options: ldbMongo.Document & { explain?: never }): ldbMongo.AggregationCursor;
-        aggregate(pipeline: ldbMongo.Document[], options: ldbMongo.Document & { explain: ldbMongo.ExplainVerbosityLike }): ldbMongo.Document;
-        aggregate(...stages: ldbMongo.Document[]): ldbMongo.AggregationCursor;
+        aggregate(pipeline: ldbMongo.CollectionAggregationPipeline, options: ldbMongo.Document & { explain?: never }, _: null): ldbMongo.AggregationCursor;
+        aggregate(pipeline: ldbMongo.CollectionAggregationPipeline, options: ldbMongo.Document & { explain: ldbMongo.ExplainVerbosityLike }, _: null): ldbMongo.Document;
+        aggregate(...stages: ldbMongo.CollectionAggregationPipeline): ldbMongo.AggregationCursor;
         bulkWrite(operations: AnyBulkWriteOperation[], options?: ldbMongo.BulkWriteOptions): shellApi.BulkWriteResult;
         countDocuments(query?: ldbMongo.Document, options?: ldbMongo.CountDocumentsOptions): number;
         deleteMany(filter: ldbMongo.Document, options?: ldbMongo.DeleteOptions): ldbMongo.DeleteResult | ldbMongo.Document;

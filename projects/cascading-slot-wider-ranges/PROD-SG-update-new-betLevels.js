@@ -1,12 +1,12 @@
 Promise.allSettled(
-    [l1_uat].map(async (dbs) => {
+    local.map(async (dbs) => {
         const UPDATE = true;
         const db = dbs.minigame;
         // const gameIds = [63, 64, 65, 68, 69, 70, 74, 76];
         // const gameIds = [62];
         // const gameIds = [46];
-        const gameIds = [38];
-        // const gameIds = [29];
+        // const gameIds = [38];
+        const gameIds = [29];
         const groupIdNull = ObjectId("000000000000000000000000");
 
         const data = [
@@ -24,7 +24,7 @@ Promise.allSettled(
                     console.log("MATCH", partnerId, name);
                     doc.groupId = _id._id;
                 }
-            }),
+            }),``
         );
 
         console.table(data);

@@ -1,13 +1,13 @@
 Promise.allSettled(
-    [l2_uat].map(async (dbs) => {
+    [l2, l2p, l2pp].map(async (dbs) => {
         const UPDATE = true;
         const db = dbs.minigame;
         // const gameIds = [76];
         // const gameIds = [63, 64, 65, 68, 69, 70, 74];
         // const gameIds = [62];
         // const gameIds = [46];
-        const gameIds = [38];
-        // const gameIds = [29];
+        // const gameIds = [38];
+        const gameIds = [29];
         const groupIdNull = ObjectId("000000000000000000000000");
 
         const data = [

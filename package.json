@@ -1,0 +1,15 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "@ldb/eslint-config": "^0.2.3",
+    "@ldb/mongo": "^6.10.3",
+    "@ldb/prettier-config": "^0.1.2",
+    "@ldb/tsconfig": "^22.0.0",
+    "@mongosh/service-provider-core": "^2.3.3",
+    "@mongosh/service-provider-server": "^2.3.2",
+    "@mongosh/shell-api": "^2.3.3",
+    "@types/node": "^22.9.0",
+    "eslint": "^9.14.0",
+    "prettier": "^3.3.3"
+  }
+}

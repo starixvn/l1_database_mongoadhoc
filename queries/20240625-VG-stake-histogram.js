@@ -62,7 +62,7 @@
                 { $set: { _id: "$$REMOVE", bucket: "$_id.bucket", currencyGroup: "$_id.currencyGroup" } },
                 { $sort: { bucket: 1 } },
             ],
-            { allowDiskUse: true }
+            { allowDiskUse: true },
         )
         .toArray();
 

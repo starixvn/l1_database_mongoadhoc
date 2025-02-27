@@ -2,7 +2,7 @@
 
 {
     const logger = (...args) => console.log(new Date().toISOString(), ...args);
-    const db = l1.minigame_arc;
+    const db = l1p.minigame_arc;
     const test = new RegExp().test;
 
     const collNames = db
@@ -61,7 +61,7 @@
 
 {
     const logger = (...args) => console.log(new Date().toISOString(), ...args);
-    const db = l2pp.minigame_arc;
+    const db = l1pp.minigame_arc;
 
     const collName = "blockchainbaccarat_results_bk";
     const coll = db.getCollection(collName);

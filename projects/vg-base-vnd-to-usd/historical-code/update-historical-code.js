@@ -1,5 +1,5 @@
 {
-    const db = l2pp.minigame;
+    const db = l2_pro.minigame;
     const backupId = ObjectId();
 
     db.exchange_rates.aggregate(
@@ -53,14 +53,41 @@
                         { $set: { "v.k": "v" } },
                         { $set: { v: { $arrayToObject: [["$v"]] } } },
                         { $set: { v: { $toDecimal: "$v.v" } } },
+                        { $sort: { k: 1 } },
                     ],
                     as: "es",
                 },
             },
             {
+                $lookup: {
+                    from: "exchange_silos",
+                    let: { exDate: "$exDate", codes: "$cfg.codes", base: "$cfg.base" },
+                    pipeline: [
+                        { $sort: { time: 1 } },
+                        { $group: { _id: "$code", data: { $first: "$$ROOT" } } },
+                        { $replaceWith: "$data" },
+                        { $match: { $expr: { $and: [{ $in: ["$code", "$$codes"] }] } } },
+                        {
+                            $project: {
+                                _id: 0,
+                                k: "$code",
+                                v: { $objectToArray: { VND: "$VND", USD: "$USD" } },
+                            },
+                        },
+                        { $unwind: "$v" },
+                        { $match: { $expr: { $eq: ["$v.k", "$$base"] } } },
+                        { $set: { "v.k": "v" } },
+                        { $set: { v: { $arrayToObject: [["$v"]] } } },
+                        { $set: { v: { $toDecimal: "$v.v" } } },
+                        { $sort: { k: 1 } },
+                    ],
+                    as: "filler",
+                },
+            },
+            {
                 $project: {
                     _id: 1,
-                    code: { $mergeObjects: [{ $arrayToObject: ["$es"] }, "$code"] },
+                    code: { $mergeObjects: [{ $arrayToObject: ["$filler"] }, { $arrayToObject: ["$es"] }, "$code"] },
                 },
             },
             { $merge: { into: "exchange_rates" } },

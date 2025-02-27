@@ -1,5 +1,5 @@
 {
-    const db = l2.minigame;
+    const db = l2_pro.minigame;
     const backupId = ObjectId();
 
     db.jackpots.aggregate(
@@ -57,7 +57,7 @@
 }
 
 {
-    const db = l2pp.minigame;
+    const db = l2_pro.minigame;
     db.jackpots.aggregate(
         /** @type {CollectionAggregationPipeline} */
         ([

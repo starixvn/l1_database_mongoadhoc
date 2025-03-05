@@ -1,4 +1,4 @@
-/** @type {DBs[]} */ (local).forEach((dbs) => {
+/** @type {DBs[]} */ (uat).forEach((dbs) => {
     const code = "LKR";
     const db = dbs.minigame;
 
@@ -14,7 +14,13 @@
         return;
     }
 
-    const res = db.exchange_rates.updateMany({ [`code.${code}`]: null }, { $set: { [`code.${code}`]: rate[base.base] } });
+    {
+        const res = db.exchange_rates.updateMany({ [`code.${code}`]: null }, { $set: { [`code.${code}`]: rate[base.base] } });
+        console.log(dbs, `Update ${code} rate`, res);
+    }
 
-    console.log(dbs, res);
+    {
+        const res = db.game_configs.updateMany({}, { $set: { exchangeReload: true } });
+        console.log(dbs, "Reload exchange", res);
+    }
 });

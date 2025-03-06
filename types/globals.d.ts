@@ -4,10 +4,10 @@ import * as serviceProviderCore from "@mongosh/service-provider-core";
 import * as shellApi from "@mongosh/shell-api";
 import ChangeStreamCursor from "@mongosh/shell-api/lib/change-stream-cursor.js";
 
-type DBs = Record<string, Database>;
-
 /** Re-export */
 declare global {
+    type DBs = Record<string, Database>;
+
     var path: typeof import("node:path");
     var util: typeof import("util");
     var fs: typeof import("fs");

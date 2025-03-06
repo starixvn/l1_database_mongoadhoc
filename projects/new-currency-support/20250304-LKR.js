@@ -1,4 +1,4 @@
-/** @type {DBs[]} */ (uat).forEach((dbs) => {
+/** @type {DBs[]} */ (pro).forEach((dbs) => {
     const code = "LKR";
     const db = dbs.minigame;
 

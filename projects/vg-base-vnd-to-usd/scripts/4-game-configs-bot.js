@@ -31,7 +31,7 @@ Promise.allSettled(
                     $set: {
                         "slotsConfig.jackpot.pools.minor.init": 200,
                         "slotsConfig.jackpot.pools.major.init": 1000,
-                        "slotsConfig.jackpot.pools.grand.init": 10000,
+                        "slotsConfig.jackpot.pools.grand.init": 2000,
                     },
                 },
             ),

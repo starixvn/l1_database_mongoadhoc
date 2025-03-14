@@ -89,11 +89,13 @@ Promise.allSettled(
             console.log(dbs, "---!!!!!!--- ABORTED promotion_configs ---!!!!!!---");
         }
 
+        // Fames
         Promise.allSettled(
-            (await db.getCollectionNames())
+            db
+                .getCollectionNames()
                 .filter((_) => /_fames$/.test(_))
                 .map(async (collName) => {
-                    const countNullExId = await db.collection(collName).countDocuments({ exchangeRateId: null });
+                    const countNullExId = await db.getCollection(collName).countDocuments({ exchangeRateId: null });
                     console.log(dbs, `${collName} with null exchangeRateId`, countNullExId);
                     if (countNullExId === 0) {
                         console.log(dbs, `${collName} to be updated: `, await db.getCollection(collName).countDocuments({ "__archive.base": { $ne: "USD" } }));
@@ -139,7 +141,7 @@ Promise.allSettled(
 
         // Balanced-pool betlog bots
         Promise.allSettled(
-            ["taixiu_cuocs", "txturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].map(async (collName) => {
+            ["taixiu_cuocs", "txturbo_cuocs", "chanleturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].map(async (collName) => {
                 console.log(dbs, `${collName} to be updated: `, await db.getCollection(collName).countDocuments({ "__archive.base": { $ne: "USD" }, operatorId: " " }));
                 console.log(
                     dbs,
@@ -197,7 +199,7 @@ Promise.allSettled(
 
         // Balanced-pool betlog players
         Promise.allSettled(
-            ["taixiu_cuocs", "txturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].map(async (collName) => {
+            ["taixiu_cuocs", "txturbo_cuocs", "chanleturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].map(async (collName) => {
                 console.log(
                     dbs,
                     `${collName} to be updated: `,
@@ -259,7 +261,7 @@ Promise.allSettled(
 
         // Balanced-pool bet bots
         Promise.allSettled(
-            ["taixiu_ones", "txturbo_ones", "specialsedie_ones", "bitcoinmaster_bets"].map(async (collName) => {
+            ["taixiu_ones", "txturbo_ones", "chanleturbo_ones", "specialsedie_ones", "bitcoinmaster_bets"].map(async (collName) => {
                 console.log(dbs, `${collName} to be updated: `, await db.getCollection(collName).countDocuments({ "__archive.base": { $ne: "USD" }, operatorId: " " }));
                 console.log(
                     dbs,
@@ -319,7 +321,7 @@ Promise.allSettled(
 
         // Balanced-pool bet players
         Promise.allSettled(
-            ["taixiu_ones", "txturbo_ones", "specialsedie_ones", "bitcoinmaster_bets"].map(async (collName) => {
+            ["taixiu_ones", "txturbo_ones", "chanleturbo_ones", "specialsedie_ones", "bitcoinmaster_bets"].map(async (collName) => {
                 console.log(
                     dbs,
                     `${collName} to be updated: `,

@@ -13,8 +13,24 @@ Promise.allSettled(
 
         const fames = (await db.getCollectionNames()).filter((collection) => /_fames$/.test(collection));
 
-        ["global_configs", "exchange_rates", "jackpots", "promotion_configs", ...fames, "taixiu_cuocs", "txturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].forEach(
-            async (collection) => {
+        await Promise.all(
+            [
+                "global_configs",
+                "exchange_rates",
+                "jackpots",
+                "promotion_configs",
+                ...fames,
+                "taixiu_cuocs",
+                "txturbo_cuocs",
+                "specialsedie_cuocs",
+                "bitcoinmaster_betlogs",
+                "game_configs",
+            ].map(async (collection) => {
+                if ((await backupDb.getCollection(`backup_${collection}`).countDocuments({ backupId })) > 0) {
+                    console.log(dbs, collection, "already backed up with ", backupId);
+                    return;
+                }
+
                 const coll = db.getCollection(collection);
                 await (
                     await coll.aggregate(
@@ -25,8 +41,14 @@ Promise.allSettled(
                     )
                 ).toArray();
 
-                console.log(dbs, collection, db.getCollection(collection).countDocuments({}), "=>", backupDb.getCollection(`backup_${collection}`).countDocuments({ backupId }));
-            },
+                console.log(
+                    dbs,
+                    collection,
+                    await db.getCollection(collection).countDocuments({}),
+                    "=>",
+                    await backupDb.getCollection(`backup_${collection}`).countDocuments({ backupId }),
+                );
+            }),
         );
 
         console.log(dbs, { backupId });

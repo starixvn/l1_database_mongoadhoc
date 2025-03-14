@@ -23,7 +23,7 @@ Promise.allSettled(
                                 localField: "exchangeRateId",
                                 foreignField: "exId",
                                 pipeline: [
-                                    { $match: { "code.USD": 1 } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                    { $match: { "code.USD": 1, "__archive.code": { $exists: true } } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
                                     { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
                                 ],
                                 as: "ex",
@@ -66,7 +66,7 @@ Promise.allSettled(
                                 localField: "exId",
                                 foreignField: "exId",
                                 pipeline: [
-                                    { $match: { "code.USD": 1 } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                    { $match: { "code.USD": 1, "__archive.code": { $exists: true } } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
                                     { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
                                 ],
                                 as: "ex",
@@ -99,6 +99,7 @@ Promise.allSettled(
                         console.log(dbs, `${collName} to be updated: `, await db.getCollection(collName).countDocuments({ "__archive.base": { $ne: "USD" } }));
                         console.log(
                             dbs,
+                            collName,
                             await (
                                 await db.getCollection(collName).aggregate([
                                     { $match: { "__archive.base": { $ne: "USD" } } },
@@ -109,7 +110,7 @@ Promise.allSettled(
                                             localField: "exchangeRateId",
                                             foreignField: "exId",
                                             pipeline: [
-                                                { $match: { "code.USD": 1 } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                                { $match: { "code.USD": 1, "__archive.code": { $exists: true } } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
                                                 { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
                                             ],
                                             as: "ex",
@@ -134,6 +135,248 @@ Promise.allSettled(
                         console.log(dbs, "---!!!!!!--- ABORTED ", collName, " ---!!!!!!---");
                     }
                 }),
+        );
+
+        // Balanced-pool betlog bots
+        Promise.allSettled(
+            ["taixiu_cuocs", "txturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].map(async (collName) => {
+                console.log(dbs, `${collName} to be updated: `, await db.getCollection(collName).countDocuments({ "__archive.base": { $ne: "USD" }, operatorId: " " }));
+                console.log(
+                    dbs,
+                    collName,
+                    await (
+                        await db.getCollection(collName).aggregate([
+                            { $sort: { _id: -1 } },
+                            { $match: { "__archive.base": { $ne: "USD" }, operatorId: " " } },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    refund: 1,
+                                    baseRefund: 1,
+                                    betwin: 1,
+                                    baseBetWin: 1,
+                                    totalWin: 1,
+                                    baseTotalWin: 1,
+                                    amount: 1,
+                                    baseAmount: 1,
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: "exchange_rates",
+                                    pipeline: [
+                                        { $match: { "code.USD": 1, "__archive.code": { $exists: true } } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                        { $sort: { time: -1 } },
+                                        { $limit: 1 },
+                                        { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
+                                    ],
+                                    as: "ex",
+                                },
+                            },
+                            { $unwind: "$ex" },
+                            {
+                                $set: {
+                                    refund: { $ifNull: [{ $multiply: ["$refund", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseRefund: { $ifNull: [{ $multiply: ["$baseRefund", "$ex.rate"] }, "$$REMOVE"] },
+                                    betwin: { $ifNull: [{ $multiply: ["$betwin", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseBetWin: { $ifNull: [{ $multiply: ["$baseBetWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    totalWin: { $ifNull: [{ $multiply: ["$totalWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseTotalWin: { $ifNull: [{ $multiply: ["$baseTotalWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    amount: { $ifNull: [{ $multiply: ["$amount", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseAmount: { $ifNull: [{ $multiply: ["$baseAmount", "$ex.rate"] }, "$$REMOVE"] },
+                                    ex: "$$REMOVE",
+                                    "__archive.base": "USD",
+                                },
+                            },
+                            ...(EXECUTE ? [{ $merge: { into: collName } }] : []),
+                        ])
+                    ).toArray(),
+                );
+            }),
+        );
+
+        // Balanced-pool betlog players
+        Promise.allSettled(
+            ["taixiu_cuocs", "txturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].map(async (collName) => {
+                console.log(
+                    dbs,
+                    `${collName} to be updated: `,
+                    await db
+                        .getCollection(collName)
+                        .countDocuments({ time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } }),
+                );
+                console.log(
+                    dbs,
+                    collName,
+                    await (
+                        await db.getCollection(collName).aggregate([
+                            { $sort: { _id: -1 } },
+                            { $match: { time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } } },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    time: 1,
+                                    baseRefund: 1,
+                                    baseBetWin: 1,
+                                    baseTotalWin: 1,
+                                    baseAmount: 1,
+                                    rate: 1,
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: "exchange_rates",
+                                    let: { time: "$time" },
+                                    pipeline: [
+                                        { $match: { $expr: { $lte: ["$time", "$$time"] } } },
+                                        { $sort: { time: -1 } },
+                                        { $limit: 1 },
+                                        { $match: { "code.USD": 1, "__archive.code": { $exists: true } } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                        { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
+                                    ],
+                                    as: "ex",
+                                },
+                            },
+                            { $unwind: "$ex" },
+                            {
+                                $set: {
+                                    baseRefund: { $ifNull: [{ $multiply: ["$baseRefund", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseBetWin: { $ifNull: [{ $multiply: ["$baseBetWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseTotalWin: { $ifNull: [{ $multiply: ["$baseTotalWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseAmount: { $ifNull: [{ $multiply: ["$baseAmount", "$ex.rate"] }, "$$REMOVE"] },
+                                    rate: { $ifNull: [{ $multiply: ["$rate", "$ex.rate"] }, "$$REMOVE"] },
+                                    time: "$$REMOVE",
+                                    ex: "$$REMOVE",
+                                    "__archive.base": "USD",
+                                },
+                            },
+                            ...(EXECUTE ? [{ $merge: { into: collName } }] : []),
+                        ])
+                    ).toArray(),
+                );
+            }),
+        );
+
+        // Balanced-pool bet bots
+        Promise.allSettled(
+            ["taixiu_ones", "txturbo_ones", "specialsedie_ones", "bitcoinmaster_bets"].map(async (collName) => {
+                console.log(dbs, `${collName} to be updated: `, await db.getCollection(collName).countDocuments({ "__archive.base": { $ne: "USD" }, operatorId: " " }));
+                console.log(
+                    dbs,
+                    collName,
+                    await (
+                        await db.getCollection(collName).aggregate([
+                            { $sort: { _id: -1 } },
+                            { $match: { "__archive.base": { $ne: "USD" }, operatorId: " " } },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    amount: 1,
+                                    baseAmount: 1,
+                                    baseBetWin: 1,
+                                    baseRefund: 1,
+                                    baseTotalWin: 1,
+                                    betwin: 1,
+                                    refund: 1,
+                                    totalAmount: 1,
+                                    totalWin: 1,
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: "exchange_rates",
+                                    pipeline: [
+                                        { $match: { "code.USD": 1, "__archive.code": { $exists: true } } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                        { $sort: { time: -1 } },
+                                        { $limit: 1 },
+                                        { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
+                                    ],
+                                    as: "ex",
+                                },
+                            },
+                            { $unwind: "$ex" },
+                            {
+                                $set: {
+                                    amount: { $ifNull: [{ $multiply: ["$amount", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseAmount: { $ifNull: [{ $multiply: ["$baseAmount", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseBetWin: { $ifNull: [{ $multiply: ["$baseBetWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseRefund: { $ifNull: [{ $multiply: ["$baseRefund", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseTotalWin: { $ifNull: [{ $multiply: ["$baseTotalWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    betwin: { $ifNull: [{ $multiply: ["$betwin", "$ex.rate"] }, "$$REMOVE"] },
+                                    refund: { $ifNull: [{ $multiply: ["$refund", "$ex.rate"] }, "$$REMOVE"] },
+                                    totalAmount: { $ifNull: [{ $multiply: ["$totalAmount", "$ex.rate"] }, "$$REMOVE"] },
+                                    totalWin: { $ifNull: [{ $multiply: ["$totalWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    ex: "$$REMOVE",
+                                    "__archive.base": "USD",
+                                },
+                            },
+                            ...(EXECUTE ? [{ $merge: { into: collName } }] : []),
+                        ])
+                    ).toArray(),
+                );
+            }),
+        );
+
+        // Balanced-pool bet players
+        Promise.allSettled(
+            ["taixiu_ones", "txturbo_ones", "specialsedie_ones", "bitcoinmaster_bets"].map(async (collName) => {
+                console.log(
+                    dbs,
+                    `${collName} to be updated: `,
+                    await db
+                        .getCollection(collName)
+                        .countDocuments({ time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } }),
+                );
+                console.log(
+                    dbs,
+                    collName,
+                    await (
+                        await db.getCollection(collName).aggregate([
+                            { $sort: { _id: -1 } },
+                            { $match: { time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } } },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    time: 1,
+                                    baseAmount: 1,
+                                    baseBetWin: 1,
+                                    baseRefund: 1,
+                                    baseTotalWin: 1,
+                                    rate: 1,
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: "exchange_rates",
+                                    let: { time: "$time" },
+                                    pipeline: [
+                                        { $match: { $expr: { $lte: ["$time", "$$time"] } } },
+                                        { $sort: { time: -1 } },
+                                        { $limit: 1 },
+                                        { $match: { "code.USD": 1, "__archive.code": { $exists: true } } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                        { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
+                                    ],
+                                    as: "ex",
+                                },
+                            },
+                            { $unwind: "$ex" },
+                            {
+                                $set: {
+                                    baseAmount: { $ifNull: [{ $multiply: ["$baseAmount", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseBetWin: { $ifNull: [{ $multiply: ["$baseBetWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseRefund: { $ifNull: [{ $multiply: ["$baseRefund", "$ex.rate"] }, "$$REMOVE"] },
+                                    baseTotalWin: { $ifNull: [{ $multiply: ["$baseTotalWin", "$ex.rate"] }, "$$REMOVE"] },
+                                    rate: { $ifNull: [{ $multiply: ["$rate", "$ex.rate"] }, "$$REMOVE"] },
+                                    time: "$$REMOVE",
+                                    ex: "$$REMOVE",
+                                    "__archive.base": "USD",
+                                },
+                            },
+                            ...(EXECUTE ? [{ $merge: { into: collName } }] : []),
+                        ])
+                    ).toArray(),
+                );
+            }),
         );
     }),
 );

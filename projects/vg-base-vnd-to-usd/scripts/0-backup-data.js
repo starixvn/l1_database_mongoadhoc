@@ -13,19 +13,21 @@ Promise.allSettled(
 
         const fames = (await db.getCollectionNames()).filter((collection) => /_fames$/.test(collection));
 
-        ["global_configs", "exchange_rates", "jackpots", "promotion_configs", ...fames].forEach(async (collection) => {
-            const coll = db.getCollection(collection);
-            await (
-                await coll.aggregate(
-                    /** @type {CollectionAggregationPipeline} */ ([
-                        { $project: { backupId: { $literal: backupId }, data: "$$ROOT" } }, //-
-                        { $merge: { into: { db: "minigame_backup", coll: `backup_${collection}` } } },
-                    ]),
-                )
-            ).toArray();
+        ["global_configs", "exchange_rates", "jackpots", "promotion_configs", ...fames, "taixiu_cuocs", "txturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].forEach(
+            async (collection) => {
+                const coll = db.getCollection(collection);
+                await (
+                    await coll.aggregate(
+                        /** @type {CollectionAggregationPipeline} */ ([
+                            { $project: { backupId: { $literal: backupId }, data: "$$ROOT" } }, //-
+                            { $merge: { into: { db: "minigame_backup", coll: `backup_${collection}` } } },
+                        ]),
+                    )
+                ).toArray();
 
-            console.log(dbs, collection, db.getCollection(collection).countDocuments({}), "=>", backupDb.getCollection(`backup_${collection}`).countDocuments({ backupId }));
-        });
+                console.log(dbs, collection, db.getCollection(collection).countDocuments({}), "=>", backupDb.getCollection(`backup_${collection}`).countDocuments({ backupId }));
+            },
+        );
 
         console.log(dbs, { backupId });
     }),

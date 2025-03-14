@@ -1,4 +1,4 @@
-[l4_sit, l4_uat].forEach((dbs) => {
+pro.forEach((dbs) => {
     const db = dbs.minigame;
     const backupId = ObjectId();
 
@@ -93,4 +93,6 @@
             { $merge: { into: "exchange_rates" } },
         ]),
     );
+
+    console.log(ISODate().toISOString(), dbs, backupId);
 });

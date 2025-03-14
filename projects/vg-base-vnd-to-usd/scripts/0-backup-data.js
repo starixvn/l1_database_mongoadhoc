@@ -5,7 +5,7 @@
 // minigame.*_fames
 
 Promise.allSettled(
-    [l2pp].map(async (dbs) => {
+    [l2_sit].map(async (dbs) => {
         const db = dbs.minigame;
         const backupDb = dbs.minigame_backup;
         const backupId = new ObjectId();
@@ -56,3 +56,4 @@ Promise.allSettled(
 );
 
 // VG LOCAL2: ObjectId('67ce84d6a4622cbfc6305aae')
+// SIT: ObjectId('67d3cc6fbbdfb267fd117b95') 

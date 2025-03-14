@@ -1,4 +1,4 @@
-[l2pp].forEach((dbs) => {
+[l2_sit].forEach((dbs) => {
     const db = dbs.minigame;
     const coll = db.getCollection("game_configs");
 

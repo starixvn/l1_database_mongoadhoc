@@ -3,18 +3,19 @@
 // minigame.*_fames - baseTotalAmount, baseWinningAmount
 
 Promise.allSettled(
-    [l2pp].map(async (dbs) => {
+    [l2_sit].map(async (dbs) => {
         const EXECUTE = true;
         const db = dbs.minigame;
+        const backupId = ObjectId("67d3cc6fbbdfb267fd117b95");
 
-        const countNullExIdJackpots = await db.jackpots.countDocuments({ exchangeRateId: null });
+        const countNullExIdJackpots = await db.jackpots.countDocuments({ exchangeRateId: null, hitAt: { $ne: null } });
         console.log(dbs, "Jackpots with null exchangeRateId", countNullExIdJackpots);
         if (countNullExIdJackpots === 0) {
             console.log(dbs, "Jackpots to be updated: ", await db.jackpots.countDocuments({ "__archive.base": { $ne: "USD" } }));
             console.log(
                 dbs,
-                await (
-                    await db.jackpots.aggregate([
+                await db.jackpots
+                    .aggregate([
                         { $match: { "__archive.base": { $ne: "USD" } } },
                         { $project: { _id: 1, amount: 1, byBots: 1, byMembers: 1, initAmount: 1, exchangeRateId: 1, rate: 1 } },
                         {
@@ -29,7 +30,26 @@ Promise.allSettled(
                                 as: "ex",
                             },
                         },
-                        { $unwind: "$ex" },
+                        { $unwind: { path: "$ex", preserveNullAndEmptyArrays: true } },
+                        {
+                            $lookup: {
+                                from: "exchange_rates",
+                                pipeline: [
+                                    { $sort: { exId: -1 } },
+                                    { $limit: 1 },
+                                    { $match: { "code.USD": 1 } }, //- NEED TO EDIT THIS CONDITION - SHOULE BE USD
+                                    { $project: { _id: 0, rate: { $toDouble: "$code.VND" } } },
+                                ],
+                                as: "ex2",
+                            },
+                        },
+                        { $unwind: "$ex2" },
+                        {
+                            $set: {
+                                ex: { $cond: [{ $not: { $gt: ["$hitAt", 0] } }, "$ex2", "$ex"] },
+                                ex2: "$$REMOVE",
+                            },
+                        },
                         {
                             $set: {
                                 amount: { $multiply: ["$amount", "$ex.rate"] },
@@ -44,7 +64,7 @@ Promise.allSettled(
                         },
                         ...(EXECUTE ? [{ $merge: { into: "jackpots" } }] : []),
                     ])
-                ).toArray(),
+                    .toArray(),
             );
         } else {
             console.log(dbs, "---!!!!!!--- ABORTED jackpots ---!!!!!!---");
@@ -203,9 +223,7 @@ Promise.allSettled(
                 console.log(
                     dbs,
                     `${collName} to be updated: `,
-                    await db
-                        .getCollection(collName)
-                        .countDocuments({ time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } }),
+                    await db.getCollection(collName).countDocuments({ time: { $lt: backupId.getTimestamp() }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } }),
                 );
                 console.log(
                     dbs,
@@ -213,7 +231,7 @@ Promise.allSettled(
                     await (
                         await db.getCollection(collName).aggregate([
                             { $sort: { _id: -1 } },
-                            { $match: { time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } } },
+                            { $match: { time: { $lt: backupId.getTimestamp() }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } } },
                             {
                                 $project: {
                                     _id: 1,
@@ -325,9 +343,7 @@ Promise.allSettled(
                 console.log(
                     dbs,
                     `${collName} to be updated: `,
-                    await db
-                        .getCollection(collName)
-                        .countDocuments({ time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } }),
+                    await db.getCollection(collName).countDocuments({ time: { $lt: backupId.getTimestamp() }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } }),
                 );
                 console.log(
                     dbs,
@@ -335,7 +351,7 @@ Promise.allSettled(
                     await (
                         await db.getCollection(collName).aggregate([
                             { $sort: { _id: -1 } },
-                            { $match: { time: { $lt: ISODate("2025-03-10T06:21:10.000Z") }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } } },
+                            { $match: { time: { $lt: backupId.getTimestamp() }, "__archive.base": { $ne: "USD" }, operatorId: { $ne: " " } } },
                             {
                                 $project: {
                                     _id: 1,

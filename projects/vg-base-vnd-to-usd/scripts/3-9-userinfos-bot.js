@@ -1,7 +1,7 @@
-[l2_sit].map((dbs) => {
+[l2_uat].map((dbs) => {
     const EXECUTE = true;
     const db = dbs.minigame;
-    const backupId = ObjectId("67d3cc6fbbdfb267fd117b95"); // Check correct environment backupId
+    const backupId = ObjectId("67d91b26f0b9bdd9664ec05e"); // Check correct environment backupId
 
     const collName = "userinfos";
 

@@ -1,6 +1,6 @@
 // VG new rate = VG old rate / USD rate
 Promise.allSettled(
-    [l2_sit].map(async (dbs) => {
+    [l2_uat].map(async (dbs) => {
         const db = dbs.minigame;
 
         console.log(

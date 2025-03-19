@@ -1,7 +1,7 @@
-[l2_sit].map((dbs) => {
+[l2_uat].map((dbs) => {
     const EXECUTE = true;
     const db = dbs.minigame;
-    const backupId = ObjectId("67d3cc6fbbdfb267fd117b95");
+    const backupId = ObjectId("67d91b26f0b9bdd9664ec05e");
 
     const countBackupData = dbs.minigame_backup.getCollection("backup_promotion_configs").countDocuments({ backupId });
     const countCurrentData = dbs.minigame.getCollection("promotion_configs").countDocuments();

@@ -1,6 +1,6 @@
 // VND => USD
 
-[l2_sit].forEach((dbs) => {
+[l2_uat].forEach((dbs) => {
     const db = dbs.minigame;
     const coll = db.getCollection("global_configs");
 

@@ -1,7 +1,7 @@
-[l2pp].map((dbs) => {
+[l2_uat].map((dbs) => {
     const EXECUTE = true;
     const db = dbs.minigame;
-    const backupId = ObjectId("67ce84d6a4622cbfc6305aae");
+    const backupId = ObjectId("67d91b26f0b9bdd9664ec05e");
 
     // Promotion leaderboard
     const collName = "promotion_leaderboards";

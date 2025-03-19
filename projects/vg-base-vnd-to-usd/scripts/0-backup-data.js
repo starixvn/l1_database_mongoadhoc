@@ -4,7 +4,7 @@
 // minigame.promotion_configs
 // minigame.*_fames
 
-[l2_uat].map((dbs) => {
+[l2_pro].map((dbs) => {
     const db = dbs.minigame;
     const backupDb = dbs.minigame_backup;
     const backupId = new ObjectId(); // New env should generate new backupId
@@ -52,20 +52,20 @@
     console.log(dbs, { backupId });
 });
 
-[].map((dbs) => {
+[l2_pro].map((dbs) => {
     const db = dbs.minigame;
 
     [
-        "taixiu_cuocs",
-        "txturbo_cuocs",
-        "chanleturbo_cuocs",
-        "specialsedie_cuocs",
-        "bitcoinmaster_betlogs",
-        "taixiu_ones",
-        "txturbo_ones",
-        "chanleturbo_ones",
-        "specialsedie_ones",
         "bitcoinmaster_bets",
+        "specialsedie_ones",
+        "chanleturbo_ones",
+        "txturbo_ones",
+        "taixiu_ones",
+        "bitcoinmaster_betlogs",
+        "specialsedie_cuocs",
+        "chanleturbo_cuocs",
+        "txturbo_cuocs",
+        "taixiu_cuocs",
     ].map((collName) => {
         if (db.getCollection(`__VNDUSD_${collName}`).exists()) {
             return;
@@ -78,3 +78,4 @@
 // VG LOCAL2: ObjectId('67ce84d6a4622cbfc6305aae')
 // VG SIT: ObjectId('67d3cc6fbbdfb267fd117b95')
 // VG UAT: ObjectId('67d91b26f0b9bdd9664ec05e')
+// VG PRO: ObjectId('67da60f9e51930f2ad117b91')

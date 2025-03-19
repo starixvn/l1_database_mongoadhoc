@@ -1,7 +1,7 @@
-[l2_uat].map((dbs) => {
+[l2_pro].map((dbs) => {
     const EXECUTE = true;
     const db = dbs.minigame;
-    const backupId = ObjectId("67d91b26f0b9bdd9664ec05e");
+    const backupId = ObjectId("67da60f9e51930f2ad117b91");
 
     // Promotion leaderboard
     const collName = "promotion_leaderboards";
@@ -27,7 +27,7 @@
         db
             .getCollection(collName)
             .aggregate([
-                { $match: { promotionId: { $in: [6, 7] }, dataSourceTimeStamp: { $lte: backupId.getTimestamp() }, "__archive.base": { $ne: "USD" } } },
+                { $match: { dataSourceTimeStamp: { $lte: backupId.getTimestamp() }, "__archive.base": { $ne: "USD" } } },
                 { $project: { _id: 1, promotionId: 1, pointInBaseCurrency: 1, awardedAmountInBaseCurrency: 1 } },
                 {
                     $lookup: {

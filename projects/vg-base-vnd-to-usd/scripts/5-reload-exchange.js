@@ -1,4 +1,4 @@
-[l2_uat].map((dbs) => {
+[l2_pro].map((dbs) => {
     const db = dbs.minigame;
     const coll = db.getCollection("game_configs");
 

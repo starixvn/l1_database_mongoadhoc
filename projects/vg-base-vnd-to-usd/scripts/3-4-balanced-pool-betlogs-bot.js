@@ -1,7 +1,7 @@
-[l2_uat].map((dbs) => {
+[l2_pro].map((dbs) => {
     const EXECUTE = true;
     const db = dbs.minigame;
-    const backupId = ObjectId("67d91b26f0b9bdd9664ec05e");
+    const backupId = ObjectId("67da60f9e51930f2ad117b91");
 
     // Balanced-pool betlog bots
     ["taixiu_cuocs", "txturbo_cuocs", "chanleturbo_cuocs", "specialsedie_cuocs", "bitcoinmaster_betlogs"].map((collName) => {
@@ -96,7 +96,7 @@
             ISODate().toISOString(),
             dbs,
             `${collName} - ${roundColl} haven't been updated: `,
-            db.getCollection(collName).countDocuments({ "__archive.base": "USD", operatorId: " ", time: { $lt: backupId.getTimestamp() } }),
+            db.getCollection(collName).countDocuments({ "__archive.base": { $ne: "USD"}, operatorId: " ", time: { $lt: backupId.getTimestamp() } }),
         );
     });
 });

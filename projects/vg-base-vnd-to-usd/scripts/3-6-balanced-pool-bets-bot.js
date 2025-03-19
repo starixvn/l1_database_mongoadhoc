@@ -1,7 +1,7 @@
-[l2_uat].map((dbs) => {
+[l2_pro].map((dbs) => {
     const EXECUTE = true;
     const db = dbs.minigame;
-    const backupId = ObjectId("67d91b26f0b9bdd9664ec05e");
+    const backupId = ObjectId("67da60f9e51930f2ad117b91");
 
     // Balanced-pool bet bots
     ["taixiu_ones", "txturbo_ones", "chanleturbo_ones", "specialsedie_ones", "bitcoinmaster_bets"].map((collName) => {

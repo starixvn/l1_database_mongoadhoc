@@ -1,5 +1,5 @@
-{
-    const db = l2_pro.minigame;
+pro.forEach((dbs) => {
+    const db = dbs.minigame;
     const backupId = ObjectId();
 
     db.exchange_rates.aggregate(
@@ -93,4 +93,6 @@
             { $merge: { into: "exchange_rates" } },
         ]),
     );
-}
+
+    console.log(ISODate().toISOString(), dbs, backupId);
+});

@@ -10,6 +10,7 @@
                     "command.ismaster": null,
                     "command.isMaster": null,
                     command: { $ne: {} },
+                    "cursor.originatingCommand.pipeline.$changeStream": { $not: { $exists: true } },
                 },
             },
             // { $match: { appName: /admin@/, active: true } },

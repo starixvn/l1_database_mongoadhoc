@@ -4,7 +4,7 @@ JSON.stringify(
             {
                 $match: {
                     _id: { $gt: ObjectId.createFromTime(ISODate("2024-11-01") / 1000) },
-                    "system": 6,
+                    system: 6,
                 },
             },
             {

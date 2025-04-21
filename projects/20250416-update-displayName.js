@@ -125,7 +125,31 @@
         { displayName: "Ramses' Lost Tomb", name: "" },
     ];
 
-    const db = l1pp.minigame;
+    const db = l2_uat.minigame;
+
+    console.table(
+        db
+            .aggregate(
+                /** @type { DatabaseAggregationPipeline }  */ ([
+                    { $documents: data },
+                    {
+                        $lookup: {
+                            from: "game_configs",
+                            localField: "name",
+                            foreignField: "name",
+                            as: "g",
+                            pipeline: [
+                                { $match: { $or: [{ displayName: { $exists: false } }, { displayName: { $eq: "" } }] } }, //-
+                                { $project: { _id: 1 } },
+                            ],
+                        },
+                    },
+                    { $unwind: "$g" },
+                ]),
+            )
+            .toArray(),
+    );
+
     db.aggregate(
         /** @type { DatabaseAggregationPipeline }  */ ([
             { $documents: data },
@@ -145,5 +169,28 @@
             { $project: { _id: "$g._id", displayName: "$displayName" } },
             { $merge: { into: "game_configs" } },
         ]),
+    );
+
+    console.table(
+        db
+            .aggregate(
+                /** @type { DatabaseAggregationPipeline }  */ ([
+                    { $documents: data },
+                    {
+                        $lookup: {
+                            from: "game_configs",
+                            localField: "name",
+                            foreignField: "name",
+                            as: "g",
+                            pipeline: [
+                                { $match: { $or: [{ displayName: { $exists: false } }, { displayName: { $eq: "" } }] } }, //-
+                                { $project: { _id: 1 } },
+                            ],
+                        },
+                    },
+                    { $unwind: "$g" },
+                ]),
+            )
+            .toArray(),
     );
 }

@@ -2,13 +2,13 @@ pro.forEach((dbs) => {
     const db = dbs.minigame;
     const backupId = ObjectId();
 
-    db.exchange_rates.aggregate(
-        /** @type {CollectionAggregationPipeline} */
-        ([
-            { $project: { _id: 0, data: "$$ROOT", backupId } },
-            { $merge: { into: { db: "minigame_backup", coll: "backup_exchange_rates" } } }, //-
-        ]),
-    );
+    // db.exchange_rates.aggregate(
+    //     /** @type {CollectionAggregationPipeline} */
+    //     ([
+    //         { $project: { _id: 0, data: "$$ROOT", backupId } },
+    //         { $merge: { into: { db: "minigame_backup", coll: "backup_exchange_rates" } } }, //-
+    //     ]),
+    // );
 
     db.exchange_rates.aggregate(
         /** @type {CollectionAggregationPipeline} */

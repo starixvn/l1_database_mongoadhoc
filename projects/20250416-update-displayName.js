@@ -125,7 +125,7 @@
         { displayName: "Ramses' Lost Tomb", name: "" },
     ];
 
-    const db = l2pp.minigame;
+    const db = l1pp.minigame;
     db.aggregate(
         /** @type { DatabaseAggregationPipeline }  */ ([
             { $documents: data },
@@ -136,7 +136,7 @@
                     foreignField: "name",
                     as: "g",
                     pipeline: [
-                        { $match: { displayName: { $exists: false } } }, //-
+                        { $match: { $or: [{ displayName: { $exists: false } }, { displayName: { $eq: "" } }] } }, //-
                         { $project: { _id: 1 } },
                     ],
                 },

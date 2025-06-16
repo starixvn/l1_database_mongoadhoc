@@ -1,5 +1,5 @@
 {
-    const db = l2_sit.minigame;
+    const db = l2_uat.minigame;
 
     const games = [
         { gameId: 29, name: "fourguardians" },

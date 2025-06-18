@@ -13,10 +13,13 @@ declare global {
     var fs: typeof import("fs");
 
     var [local, sit, sit_arc, uat, uat_arc, pro, pro_arc]: DBs[][];
-    var [l1, l1p, l1pp, l1ppp, l2, l2p, l2pp, l4]: DBs[];
-    var [l1_sit, l1_uat, l1_pro, l2_sit, l2_uat, l2_pro, l4_sit, l4_uat, l4_pro]: DBs[];
-    var [l1_sit_arc, l1_uat_arc, l1_pro_arc, l2_sit_arc, l2_uat_arc, l2_pro_arc, l4_sit_arc, l4_uat_arc, l4_pro_arc]: DBs[];
-    var [sn_sit_arc, sn_uat_arc, sn_pro_arc]: DBs[];
+    var [l1, l1p, l1pp, l1ppp, l2, l2p, l2pp, l4, l5]: DBs[];
+    var [l1_sit, l2_sit, l4_sit, l5_sit]: DBs[];
+    var [l1_uat, l2_uat, l4_uat, l5_uat]: DBs[];
+    var [l1_pro, l2_pro, l4_pro, l5_pro]: DBs[];
+    var [l1_sit_arc, l2_sit_arc, l4_sit_arc, l5_sit_arc]: DBs[];
+    var [l1_uat_arc, l2_uat_arc, l4_uat_arc, l5_uat_arc]: DBs[];
+    var [l1_pro_arc, l2_pro_arc, l4_pro_arc, l5_pro_arc]: DBs[];
 
     var _auth: number;
     var auth: (db: DBs | Database) => void;

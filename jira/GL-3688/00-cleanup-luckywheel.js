@@ -1,4 +1,4 @@
-local.forEach((dbs) => {
+[l2_pro].forEach((dbs) => {
     const backupId = "GL-3688";
     const filter = { name: "luckywheel" };
 

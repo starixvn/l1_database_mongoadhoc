@@ -29,15 +29,27 @@
  * IMPORTANT: Make sure PRIMARY is 101 instance
  */
 {
+    const _id = 181;
+    const host = "10.99.99.188:34181";
+    // rs.remove(host);
+    rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
+}
+{
+    const _id = 182;
+    const host = "10.99.99.188:34182";
+    // rs.remove(host);
+    rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
+}
+{
     const _id = 102;
-    const host = "10.99.99.54:47102";
-    rs.remove(host);
+    const host = "10.99.99.54:34102";
+    // rs.remove(host);
     rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
 }
 {
     const _id = 103;
-    const host = "10.99.99.53:47103";
-    rs.remove(host);
+    const host = "10.99.99.53:34103";
+    // rs.remove(host);
     rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
 }
 
@@ -55,8 +67,8 @@
  */
 {
     const _id = 101;
-    const host = "10.40.40.60:47101";
-    rs.remove(host);
+    const host = "10.40.40.60:34101";
+    // rs.remove(host);
     rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
 }
 

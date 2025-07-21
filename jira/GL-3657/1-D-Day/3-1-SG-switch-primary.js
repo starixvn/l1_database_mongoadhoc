@@ -23,20 +23,45 @@
     rs.remove(host);
     rs.add({ _id, host, priority: 10, votes: 1, tags: { idc: "KL" } });
 }
+{
+    const _id = 481;
+    const host = "10.146.34.28:31481";
+    rs.remove(host);
+    rs.add({ _id, host, priority: 0, votes: 0,  hidden: true, tags: { idc: "KL" } });
+}
+{
+    const _id = 482;
+    const host = "10.146.34.28:31482";
+    rs.remove(host);
+    rs.add({ _id, host, priority: 0, votes: 0,  hidden: true, tags: { idc: "KL" } });
+}
+
 
 /**
  * STEP 2: Remove AK secondary members and add back as hidden members
  */
 {
+    const _id = 181;
+    const host = "10.99.99.188:31181";
+    // rs.remove(host);
+    rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
+}
+{
+    const _id = 182;
+    const host = "10.99.99.188:31182";
+    // rs.remove(host);
+    rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
+}
+{
     const _id = 102;
-    const host = "10.99.99.53:27102";
-    rs.remove(host);
+    const host = "10.99.99.53:31102";
+    // rs.remove(host);
     rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
 }
 {
     const _id = 103;
-    const host = "10.40.40.60:27103";
-    rs.remove(host);
+    const host = "10.40.40.60:31103";
+    // rs.remove(host);
     rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
 }
 
@@ -54,8 +79,8 @@
  */
 {
     const _id = 101;
-    const host = "10.99.99.54:27101";
-    rs.remove(host);
+    const host = "10.99.99.54:31101";
+    // rs.remove(host);
     rs.add({ _id, host, priority: 0, votes: 0, hidden: true, tags: { idc: "AK" } });
 }
 

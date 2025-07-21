@@ -13,7 +13,7 @@ pro.forEach((dbs) => {
 
     const { databases } = dbs._mongo.getDBs();
     databases.forEach(({ name }) => {
-        if (!["minigame", "log", "summary", "member"].includes(name)) return;
+        if (!["minigame", "log", "summary", "member", "hotdog_minigame", "hotdog_log", "hotdog_summary", "hotdog_member", "marble_odds_feed"].includes(name)) return;
         console.log(dbs, name, "--------------------------------");
         const db = dbs[name];
 

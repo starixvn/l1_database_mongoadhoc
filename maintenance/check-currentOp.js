@@ -1,5 +1,5 @@
 {
-    const dbs = l4p;
+    const dbs = l1_pro;
 
     const res = dbs.admin
         .aggregate([
@@ -35,4 +35,28 @@
 
     // console.table(res);
     res;
+}
+
+{
+    // dbs.admin
+    db
+        .aggregate([
+            { $currentOp: { allUsers: true, idleConnections: true } }, //-
+            { $match: { isFromUserConnection: true } },
+            {
+                $group: {
+                    _id: { host: { $arrayElemAt: [{ $split: ["$client", ":"] }, 0] } },
+                    cnt: { $sum: 1 },
+                },
+            },
+        ])
+        .toArray();
+}
+
+{
+    dbs.admin
+        .aggregate([
+            { $currentOp: { allUsers: true, idleConnections: true } }, //-
+        ])
+        .toArray();
 }

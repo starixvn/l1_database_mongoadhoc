@@ -105,29 +105,32 @@
     });
 
     await Promise.all(tasks);
-
     // Flatten data to array of JSON objects
     const result = Array.from(data.entries()).map(([timeNo, systemData]) => {
         const entry = { timeNo, timeStart: null };
 
-        // Add data for each system (SG, VG, XD)
-        for (const [system, { timeStart, successCount, failedCount }] of systemData.entries()) {
-            entry.timeStart = entry.timeStart || timeStart; // Use the first timeStart we encounter
-            entry[`${system}_success`] = successCount || 0;
-            entry[`${system}_failed`] = failedCount || 0;
+        // Add data for each system in specific order: SG, VG, XD
+        const systemOrder = ["SG", "VG", "XD"];
+        for (const system of systemOrder) {
+            const data = systemData.get(system) || {};
+            const timeStart = data.timeStart;
+            const successCount = data.successCount || 0;
+            const failedCount = data.failedCount || 0;
+            const total = successCount + failedCount;
+            const successRate = total > 0 ? successCount / total : 0;
 
-            // Calculate success rate for each system
-            const total = entry[`${system}_success`] + entry[`${system}_failed`];
-            entry[`${system}_success_rate`] = total > 0 ? entry[`${system}_success`] / total : 0;
+            entry.timeStart = entry.timeStart || timeStart; // Use the first timeStart we encounter
+            entry[`${system}_success`] = successCount;
+            entry[`${system}_failed`] = failedCount;
+            entry[`${system}_total`] = total;
+            entry[`${system}_success_rate`] = successRate;
         }
 
         // Calculate totals across all systems
-        entry.total_success = entry.SG_success + entry.VG_success + entry.XD_success;
-        entry.total_failed = entry.SG_failed + entry.VG_failed + entry.XD_failed;
-
-        // Calculate total success rate
-        const totalAttempts = entry.total_success + entry.total_failed;
-        entry.total_success_rate = totalAttempts > 0 ? entry.total_success / totalAttempts : 0;
+        entry.total_success = (entry.SG_success || 0) + (entry.VG_success || 0) + (entry.XD_success || 0);
+        entry.total_failed = (entry.SG_failed || 0) + (entry.VG_failed || 0) + (entry.XD_failed || 0);
+        entry.total = entry.total_success + entry.total_failed;
+        entry.total_success_rate = entry.total > 0 ? entry.total_success / entry.total : 0;
 
         return entry;
     });

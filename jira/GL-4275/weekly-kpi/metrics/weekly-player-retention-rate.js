@@ -15,7 +15,7 @@
                             currency: { $nin: ["UUS"] },
                         },
                     }, // -
-                    { $project: { _id: 0, time: 1, playerId: 1, operatorId: 1 } },
+                    { $project: { _id: 0, joinTime: 1, playerId: 1, operatorId: 1 } },
                     {
                         $lookup: {
                             from: "ticket_silos",
@@ -23,7 +23,7 @@
                             foreignField: "playerId",
                             let: {
                                 operatorId: "$operatorId",
-                                startTime: "$time",
+                                startTime: "$joinTime",
                             },
                             pipeline: [
                                 {

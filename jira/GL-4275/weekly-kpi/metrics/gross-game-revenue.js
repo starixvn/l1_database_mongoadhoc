@@ -11,7 +11,7 @@
                 /** @type { CollectionAggregationPipeline } */ ([
                     {
                         $match: {
-                            time: { $gte: ISODate("2024-01-01"), $lt: ISODate("2025-01-01") },
+                            time: { $gte: ISODate("2024-01-01"), $lt: ISODate("2025-01-07") },
                             currency: { $nin: ["UUS"] },
                         },
                     }, // -
@@ -19,7 +19,12 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                timeNo: {
+                                    $add: [
+                                        { $multiply: [{ $year: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } }, 100] },
+                                        { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                    ],
+                                },
                                 time: "$time",
                             },
                             ggr: { $sum: { $subtract: [0, "$winloss"] } },
@@ -99,7 +104,12 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                timeNo: {
+                                    $add: [
+                                        { $multiply: [{ $year: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } }, 100] },
+                                        { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                    ],
+                                },
                                 time: "$time",
                             },
                             ggr: { $sum: { $subtract: [0, "$winloss"] } },
@@ -179,7 +189,12 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                timeNo: {
+                                    $add: [
+                                        { $multiply: [{ $year: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } }, 100] },
+                                        { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                    ],
+                                },
                                 time: "$time",
                             },
                             ggr: { $sum: { $subtract: [0, "$winloss"] } },

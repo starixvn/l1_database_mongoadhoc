@@ -19,7 +19,7 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $month: "$time" },
+                                timeNo: { $add: [{ $multiply: [{ $year: "$time" }, 100] }, { $month: "$time" }] },
                                 time: "$time",
                                 player: "$playerId",
                             },
@@ -107,7 +107,7 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $month: "$time" },
+                                timeNo: { $add: [{ $multiply: [{ $year: "$time" }, 100] }, { $month: "$time" }] },
                                 time: "$time",
                                 player: "$playerId",
                             },

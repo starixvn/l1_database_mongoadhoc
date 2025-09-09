@@ -11,7 +11,7 @@
                 /** @type { CollectionAggregationPipeline } */ ([
                     {
                         $match: {
-                            ssoTime: { $gte: ISODate("2025-01-01") },
+                            ssoTime: { $gte: ISODate("2024-12-23") },
                             currencyName: { $nin: ["UUS"] },
                         },
                     }, // -
@@ -66,10 +66,16 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                timeNo: {
+                                    $add: [
+                                        { $multiply: [{ $year: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } }, 100] },
+                                        { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                    ],
+                                },
                                 time: "$time",
                             },
                             count: { $sum: 1 },
+                            countActive: { $sum: { $cond: [{ $gt: ["$bets", 0] }, 1, 0] } },
                             bets: { $sum: "$bets" },
                         },
                     },
@@ -79,20 +85,21 @@
                             timeNo: "$_id.timeNo",
                             timeStart: { $substrCP: [{ $toString: "$_id.time" }, 0, 10] },
                             count: 1,
+                            countActive: 1,
                             bets: 1,
                         },
                     },
                     { $sort: { timeNo: 1 } },
                 ]),
             )
-        ).forEach(({ timeNo, timeStart, count, bets }) => {
+        ).forEach(({ timeNo, timeStart, count, countActive, bets }) => {
             const timeData = data.get(timeNo) || new Map();
 
             if (!data.has(timeNo)) {
                 data.set(timeNo, timeData);
             }
 
-            timeData.set(system, { timeStart, count, bets });
+            timeData.set(system, { timeStart, count, countActive, bets });
         });
     });
 
@@ -105,22 +112,28 @@
         const systemOrder = ["SG", "VG", "XD"];
         for (const system of systemOrder) {
             if (systemData.has(system)) {
-                const { timeStart, count, bets } = systemData.get(system);
+                const { timeStart, count, countActive, bets } = systemData.get(system);
                 entry.timeStart = entry.timeStart || timeStart; // Use the first timeStart we encounter
                 entry[system] = count;
+                entry[`${system}_countActive`] = countActive;
                 entry[`${system}_bets`] = bets;
                 entry[`${system}_betsPerSession`] = count > 0 ? bets / count : 0;
+                entry[`${system}_betsPerSessionActive`] = countActive > 0 ? bets / countActive : 0;
             } else {
                 entry[system] = 0; // Ensure the system property exists even if no data
+                entry[`${system}_countActive`] = 0;
                 entry[`${system}_bets`] = 0;
                 entry[`${system}_betsPerSession`] = 0;
+                entry[`${system}_betsPerSessionActive`] = 0;
             }
         }
 
         // Calculate totals across all systems
         entry.total = (entry.SG || 0) + (entry.VG || 0) + (entry.XD || 0);
+        entry.total_countActive = (entry.SG_countActive || 0) + (entry.VG_countActive || 0) + (entry.XD_countActive || 0);
         entry.total_bets = (entry.SG_bets || 0) + (entry.VG_bets || 0) + (entry.XD_bets || 0);
         entry.total_betsPerSession = entry.total > 0 ? entry.total_bets / entry.total : 0;
+        entry.total_betsPerSessionActive = entry.total > 0 ? entry.total_bets / entry.total_countActive : 0;
 
         return entry;
     });

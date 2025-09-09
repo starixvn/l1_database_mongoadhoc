@@ -20,7 +20,12 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                timeNo: {
+                                    $add: [
+                                        { $multiply: [{ $year: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } }, 100] },
+                                        { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                    ],
+                                },
                                 time: "$time",
                             },
                             failedCount: { $sum: 1 },
@@ -68,7 +73,12 @@
                     {
                         $group: {
                             _id: {
-                                timeNo: { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                timeNo: {
+                                    $add: [
+                                        { $multiply: [{ $year: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } }, 100] },
+                                        { $week: { $dateAdd: { startDate: "$time", unit: "day", amount: 6 } } },
+                                    ],
+                                },
                                 time: "$time",
                             },
                             successCount: { $sum: 1 },

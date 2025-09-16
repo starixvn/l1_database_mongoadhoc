@@ -11,7 +11,7 @@
                 /** @type { CollectionAggregationPipeline } */ ([
                     {
                         $match: {
-                            ssoTime: { $gte: ISODate("2024-12-23") },
+                            ssoTime: { $gte: ISODate("2025-08-01") },
                             currencyName: { $nin: ["UUS"] },
                         },
                     }, // -
@@ -41,7 +41,7 @@
                             pipeline: [
                                 {
                                     $match: {
-                                        time: { $gte: ISODate("2025-01-01") },
+                                        time: { $gte: ISODate("2025-08-01") },
                                         $expr: {
                                             $and: [
                                                 { $eq: ["$operatorId", "$$operatorId"] }, // -

@@ -2,7 +2,7 @@
 
 (async () => {
     const data = await (
-        await l1_pro.minigame.ticket_silos.aggregate(
+        await l2_pro.minigame.ticket_silos.aggregate(
             /** @type { CollectionAggregationPipeline } */ ([
                 {
                     $match: {
@@ -33,10 +33,11 @@
                         tickets: { $sum: "$tickets" },
                         stake: { $sum: "$stake" },
                         winloss: { $sum: "$winloss" },
-                        playersBFS: { $addToSet: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$playerId", "$$REMOVE"] } },
-                        ticketsBFS: { $sum: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$tickets", 0] } },
-                        stakeBFS: { $sum: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$stake", 0] } },
-                        winlossBFS: { $sum: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$winloss", 0] } },
+                        buyFreeSpins: { $addToSet: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$buyFreeSpins", "$$REMOVE"] } },
+                        playersBFS: { $addToSet: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$playerId", "$$REMOVE"] } },
+                        ticketsBFS: { $sum: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$tickets", 0] } },
+                        stakeBFS: { $sum: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$stake", 0] } },
+                        winlossBFS: { $sum: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$winloss", 0] } },
                     },
                 },
                 {
@@ -51,6 +52,7 @@
                         tickets: 1,
                         stake: { $toDouble: "$stake" },
                         winloss: { $toDouble: "$winloss" },
+                        buyFreeSpins: { $size: "$buyFreeSpins" },
                         playersBFS: { $size: "$playersBFS" },
                         ticketsBFS: 1,
                         stakeBFS: { $toDouble: "$stakeBFS" },
@@ -61,7 +63,7 @@
             ]),
         )
     )
-        .map(({ monthNo, month, dayNo, day, opreatorId, players, tickets, stake, winloss, playersBFS, ticketsBFS, stakeBFS, winlossBFS }) => ({
+        .map(({ monthNo, month, dayNo, day, opreatorId, players, tickets, stake, winloss, buyFreeSpins, playersBFS, ticketsBFS, stakeBFS, winlossBFS }) => ({
             monthNo,
             month,
             dayNo,
@@ -71,6 +73,7 @@
             tickets,
             stake,
             winloss,
+            buyFreeSpins,
             playersBFS,
             ticketsBFS,
             stakeBFS,
@@ -115,10 +118,11 @@
                         tickets: { $sum: "$tickets" },
                         stake: { $sum: "$stake" },
                         winloss: { $sum: "$winloss" },
-                        playersBFS: { $addToSet: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$playerId", "$$REMOVE"] } },
-                        ticketsBFS: { $sum: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$tickets", 0] } },
-                        stakeBFS: { $sum: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$stake", 0] } },
-                        winlossBFS: { $sum: { $cond: [{ $eq: ["$buyFreeSpins", true] }, "$winloss", 0] } },
+                        buyFreeSpins: { $addToSet: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$buyFreeSpins", "$$REMOVE"] } },
+                        playersBFS: { $addToSet: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$playerId", "$$REMOVE"] } },
+                        ticketsBFS: { $sum: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$tickets", 0] } },
+                        stakeBFS: { $sum: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$stake", 0] } },
+                        winlossBFS: { $sum: { $cond: [{ $gt: ["$buyFreeSpins", 0] }, "$winloss", 0] } },
                     },
                 },
                 {
@@ -133,6 +137,7 @@
                         tickets: 1,
                         stake: { $toDouble: "$stake" },
                         winloss: { $toDouble: "$winloss" },
+                        buyFreeSpins: { $size: "$buyFreeSpins" },
                         playersBFS: { $size: "$playersBFS" },
                         ticketsBFS: 1,
                         stakeBFS: { $toDouble: "$stakeBFS" },
@@ -143,7 +148,7 @@
             ]),
         )
     )
-        .map(({ monthNo, month, dayNo, day, opreatorId, players, tickets, stake, winloss, playersBFS, ticketsBFS, stakeBFS, winlossBFS }) => ({
+        .map(({ monthNo, month, dayNo, day, opreatorId, players, tickets, stake, winloss, buyFreeSpins, playersBFS, ticketsBFS, stakeBFS, winlossBFS }) => ({
             monthNo,
             month,
             dayNo,
@@ -153,6 +158,7 @@
             tickets,
             stake,
             winloss,
+            buyFreeSpins,
             playersBFS,
             ticketsBFS,
             stakeBFS,

@@ -13,7 +13,7 @@ declare global {
     var fs: typeof import("fs");
 
     var [local, sit, sit_arc, uat, uat_arc, pro, pro_arc]: DBs[][];
-    var [l1, l1p, l1pp, l1ppp, l2, l2p, l2pp, l4, l5]: DBs[];
+    var [l1, l1p, l1pp, l1ppp, l2, l2p, l2pp, l4, l4p, l5]: DBs[];
     var [l1_sit, l2_sit, l4_sit, l5_sit]: DBs[];
     var [l1_uat, l2_uat, l4_uat, l5_uat]: DBs[];
     var [l1_pro, l2_pro, l4_pro, l5_pro]: DBs[];

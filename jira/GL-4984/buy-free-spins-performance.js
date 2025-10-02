@@ -2,7 +2,7 @@
 
 (async () => {
     const data = await (
-        await l2_pro.minigame.ticket_silos.aggregate(
+        await l1_pro.minigame.ticket_silos.aggregate(
             /** @type { CollectionAggregationPipeline } */ ([
                 {
                     $match: {
@@ -14,6 +14,7 @@
                 {
                     $project: {
                         _id: 0,
+                        gameId: 1,
                         time: { $dateTrunc: { date: "$roundTime", unit: "day" } },
                         operatorId: 1,
                         playerId: 1,
@@ -26,8 +27,9 @@
                 {
                     $group: {
                         _id: {
+                            gameId: "$gameId",
                             time: "$time",
-                            opreatorId: "$operatorId",
+                            operatorId: "$operatorId",
                         },
                         players: { $addToSet: "$playerId" },
                         tickets: { $sum: "$tickets" },
@@ -47,7 +49,7 @@
                         month: { $substrCP: [{ $toString: { $dateTrunc: { date: "$_id.time", unit: "month" } } }, 0, 7] },
                         dayNo: { $add: [{ $multiply: [{ $year: "$_id.time" }, 1_000] }, { $dayOfYear: "$_id.time" }] },
                         day: { $substrCP: [{ $toString: "$_id.time" }, 0, 10] },
-                        opreatorId: "$_id.opreatorId",
+                        operatorId: "$_id.operatorId",
                         players: { $size: "$players" },
                         tickets: 1,
                         stake: { $toDouble: "$stake" },

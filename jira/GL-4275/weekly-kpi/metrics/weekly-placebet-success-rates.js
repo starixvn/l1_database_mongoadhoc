@@ -2,12 +2,13 @@
     const data = new Map();
 
     const tasks = [
-        { dbs: l1_pro_arc, system: "SG" },
-        { dbs: l2_pro_arc, system: "VG" },
-        { dbs: l4_pro_arc, system: "XD" },
-    ].map(async ({ dbs, system }) => {
+        { db: l1_pro_arc.log_arc, system: "SG" },
+        { db: l2_pro_arc.log_arc, system: "VG" },
+        { db: l4_pro_arc.log_arc, system: "XD" },
+        { db: l5_pro_arc.hotdog_log_arc, system: "SP-HD" },
+    ].map(async ({ db, system }) => {
         (
-            await dbs.log_arc.failed_requests_bk.aggregate(
+            await db.failed_requests_bk.aggregate(
                 /** @type { CollectionAggregationPipeline } */ ([
                     {
                         $match: {
@@ -58,10 +59,10 @@
             systemData.timeStart = systemData.timeStart || timeStart;
             systemData.failedCount = failedCount;
         });
-        console.log(dbs, "failed_requests");
+        console.log(db, "failed_requests");
 
         (
-            await dbs.log_arc.bets_bk.aggregate(
+            await db.bets_bk.aggregate(
                 /** @type { CollectionAggregationPipeline } */ ([
                     {
                         $match: {
@@ -111,7 +112,7 @@
             systemData.timeStart = systemData.timeStart || timeStart;
             systemData.successCount = successCount;
         });
-        console.log(dbs, "bets");
+        console.log(db, "bets");
     });
 
     await Promise.all(tasks);
@@ -120,7 +121,7 @@
         const entry = { timeNo, timeStart: null };
 
         // Add data for each system in specific order: SG, VG, XD
-        const systemOrder = ["SG", "VG", "XD"];
+        const systemOrder = ["SG", "VG", "XD", "SP-HD"];
         for (const system of systemOrder) {
             const data = systemData.get(system) || {};
             const timeStart = data.timeStart;
@@ -137,8 +138,8 @@
         }
 
         // Calculate totals across all systems
-        entry.total_success = (entry.SG_success || 0) + (entry.VG_success || 0) + (entry.XD_success || 0);
-        entry.total_failed = (entry.SG_failed || 0) + (entry.VG_failed || 0) + (entry.XD_failed || 0);
+        entry.total_success = (entry.SG_success || 0) + (entry.VG_success || 0) + (entry.XD_success || 0) + (entry["SP-HD_success"] || 0);
+        entry.total_failed = (entry.SG_failed || 0) + (entry.VG_failed || 0) + (entry.XD_failed || 0) + (entry["SP-HD_failed"] || 0);
         entry.total = entry.total_success + entry.total_failed;
         entry.total_success_rate = entry.total > 0 ? entry.total_success / entry.total : 0;
 

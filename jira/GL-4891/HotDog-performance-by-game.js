@@ -5,7 +5,7 @@
             {
                 $match: {
                     currency: { $ne: "UUS" },
-                    time: { $gte: ISODate("2025-07-11"), $lt: ISODate("2025-09-15") },
+                    time: { $gte: ISODate("2025-09-01"), $lt: ISODate("2025-10-12") },
                 },
             },
             {
@@ -45,7 +45,7 @@
             {
                 $match: {
                     currency: { $ne: "UUS" },
-                    time: { $gte: ISODate("2025-07-11"), $lt: ISODate("2025-09-15") },
+                    time: { $gte: ISODate("2025-09-01"), $lt: ISODate("2025-10-12") },
                 },
             },
             {

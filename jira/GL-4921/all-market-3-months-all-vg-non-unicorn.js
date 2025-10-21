@@ -10,7 +10,7 @@
                             $expr: {
                                 $not: { $and: [{ $eq: ["$operatorId", "SabaPlay"] }, { $eq: ["$siteId", "10000178"] }] },
                             },
-                            time: { $gte: ISODate("2025-06-01"), $lt: ISODate("2025-09-01") },
+                            time: { $gte: ISODate("2025-06-01"), $lt: ISODate("2025-10-01") },
                             currency: { $nin: ["UUS"] },
                         },
                     },

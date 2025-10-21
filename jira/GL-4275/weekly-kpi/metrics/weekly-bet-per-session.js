@@ -2,16 +2,17 @@
     const data = new Map();
 
     const tasks = [
-        [l1_pro_arc, "SG"],
-        [l2_pro_arc, "VG"],
-        [l4_pro_arc, "XD"],
-    ].map(async ([dbs, system]) => {
+        [l1_pro_arc.minigame_arc, "SG"],
+        [l2_pro_arc.minigame_arc, "VG"],
+        [l4_pro_arc.minigame_arc, "XD"],
+        [l5_pro_arc.hotdog_minigame_arc, "SP-HD"],
+    ].map(async ([db, system]) => {
         (
-            await dbs.minigame_arc.usersessions_bk.aggregate(
+            await db.usersessions_bk.aggregate(
                 /** @type { CollectionAggregationPipeline } */ ([
                     {
                         $match: {
-                            ssoTime: { $gte: ISODate("2025-08-01") },
+                            ssoTime: { $gte: ISODate("2025-07-01") },
                             currencyName: { $nin: ["UUS"] },
                         },
                     }, // -
@@ -24,8 +25,8 @@
                             operatorId: 1,
                             sessionId: 1,
                             startTime: "$ssoTime",
-                            endTime: { $dateAdd: { startDate: "$recheckInTime", unit: "second", amount: 60 } },
-                            duration: { $add: [{ $dateDiff: { startDate: "$ssoTime", endDate: "$recheckInTime", unit: "second" } }, 60] },
+                            endTime: { $dateAdd: { startDate: "$recheckInTime", unit: "second", amount: 90 } },
+                            duration: { $add: [{ $dateDiff: { startDate: "$ssoTime", endDate: "$recheckInTime", unit: "second" } }, 90] },
                         },
                     },
                     {
@@ -41,7 +42,7 @@
                             pipeline: [
                                 {
                                     $match: {
-                                        time: { $gte: ISODate("2025-08-01") },
+                                        time: { $gte: ISODate("2025-09-19") },
                                         $expr: {
                                             $and: [
                                                 { $eq: ["$operatorId", "$$operatorId"] }, // -
@@ -109,7 +110,7 @@
         const entry = { timeNo, timeStart: null };
 
         // Add data for each system in specific order: SG, VG, XD
-        const systemOrder = ["SG", "VG", "XD"];
+        const systemOrder = ["SG", "VG", "XD", "SP-HD"];
         for (const system of systemOrder) {
             if (systemData.has(system)) {
                 const { timeStart, count, countActive, bets } = systemData.get(system);
@@ -129,9 +130,9 @@
         }
 
         // Calculate totals across all systems
-        entry.total = (entry.SG || 0) + (entry.VG || 0) + (entry.XD || 0);
-        entry.total_countActive = (entry.SG_countActive || 0) + (entry.VG_countActive || 0) + (entry.XD_countActive || 0);
-        entry.total_bets = (entry.SG_bets || 0) + (entry.VG_bets || 0) + (entry.XD_bets || 0);
+        entry.total = (entry.SG || 0) + (entry.VG || 0) + (entry.XD || 0) + (entry["SP-HD"] || 0);
+        entry.total_countActive = (entry.SG_countActive || 0) + (entry.VG_countActive || 0) + (entry.XD_countActive || 0) + (entry["SP-HD_countActive"] || 0);
+        entry.total_bets = (entry.SG_bets || 0) + (entry.VG_bets || 0) + (entry.XD_bets || 0) + (entry["SP-HD_bets"] || 0);
         entry.total_betsPerSession = entry.total > 0 ? entry.total_bets / entry.total : 0;
         entry.total_betsPerSessionActive = entry.total > 0 ? entry.total_bets / entry.total_countActive : 0;
 

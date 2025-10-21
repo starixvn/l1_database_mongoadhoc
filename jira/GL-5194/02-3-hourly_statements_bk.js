@@ -2,7 +2,7 @@
     await (
         await l5_pro_arc.hotdog_minigame_arc.ticket_silos_bk.aggregate(
             /** @type { CollectionAggregationPipeline } */ ([
-                { $match: { time: { $lt: ISODate("2025-08-26") } } },
+                { $match: { time: { $gte: ISODate("2025-08-26"), $lt: ISODate("2025-10-12") } } },
                 {
                     $group: {
                         _id: "$_ids.hourlyStatement",

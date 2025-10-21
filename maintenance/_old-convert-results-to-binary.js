@@ -61,7 +61,7 @@
 
 {
     const logger = (...args) => console.log(new Date().toISOString(), ...args);
-    const db = l1pp.minigame_arc;
+    const db = l1_sit_arc.minigame_arc;
 
     const collName = "blockchainbaccarat_results_bk";
     const coll = db.getCollection(collName);
